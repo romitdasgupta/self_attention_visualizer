@@ -293,6 +293,161 @@
         .tab-content.active {
             display: block;
         }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .flow-step {
+            text-align: center;
+            padding: 15px;
+            min-width: 120px;
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .flow-arrow {
+            font-size: 2em;
+            color: #667eea;
+            margin: 0 10px;
+        }
+
+        .qkv-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .qkv-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .qkv-card h3 {
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .qkv-query {
+            border-left: 4px solid #FF6B6B;
+        }
+
+        .qkv-key {
+            border-left: 4px solid #4ECDC4;
+        }
+
+        .qkv-value {
+            border-left: 4px solid #95E1D3;
+        }
+
+        .vector-display {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin: 8px 0;
+            overflow-x: auto;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .vector-row {
+            margin: 4px 0;
+        }
+
+        .interaction-canvas {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .meaning-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .meaning-box h4 {
+            margin-bottom: 10px;
+        }
+
+        .highlight-query {
+            background: rgba(255, 107, 107, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .highlight-key {
+            background: rgba(78, 205, 196, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .highlight-value {
+            background: rgba(149, 225, 211, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .token-embedding-viz {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .token-box {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .embedding-viz {
+            display: flex;
+            gap: 2px;
+            margin: 0 15px;
+        }
+
+        .embedding-bar {
+            width: 8px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .projection-arrow {
+            margin: 0 10px;
+            font-size: 1.5em;
+            color: #667eea;
+        }
     </style>
 </head>
 <body>
@@ -378,6 +533,23 @@
                     <div class="section-title">Step-by-Step Mathematical Breakdown</div>
                     <div id="mathBreakdown"></div>
                 </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Deep Dive: Q, K, V Transformation</div>
+                <div class="info-box">
+                    <strong>Conceptual Understanding:</strong><br>
+                    • <strong>Query (Q):</strong> "What am I looking for?" - Represents what each token wants to know<br>
+                    • <strong>Key (K):</strong> "What do I offer?" - Represents what information each token provides<br>
+                    • <strong>Value (V):</strong> "Here's my actual content" - The actual information to be aggregated<br><br>
+                    The attention mechanism is like a database lookup: Q asks questions, K provides indices, and V contains the actual data.
+                </div>
+                <div id="qkvVisualization"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Attention Mechanism Flow</div>
+                <div id="attentionFlow"></div>
             </div>
         </div>
     </div>
@@ -691,6 +863,12 @@
 
             // Generate mathematical breakdown
             generateMathBreakdown(tokens, embeddings, mhsa, result);
+
+            // Generate Q/K/V visualizations
+            generateQKVVisualization(tokens, embeddings, mhsa, result);
+
+            // Generate attention flow visualization
+            generateAttentionFlowVisualization(tokens, embeddings, mhsa, result);
         }
 
         function averageAttentions(attentions) {
@@ -799,6 +977,463 @@
             `;
 
             container.innerHTML = html;
+        }
+
+        function generateQKVVisualization(tokens, embeddings, mhsa, result) {
+            const container = document.getElementById('qkvVisualization');
+            const head0 = result.headOutputs[0];
+
+            let html = `
+                <div class="math-step">
+                    <h4>Transformation Pipeline for First Token: "${tokens[0]}"</h4>
+                    <div class="flow-diagram">
+                        <div class="flow-step">
+                            <div class="flow-box token-box">Token<br>"${tokens[0]}"</div>
+                            <small>Input word</small>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="flow-box">Embedding<br>[${mhsa.embedDim}d]</div>
+                            <small>Dense vector</small>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="flow-box" style="background: linear-gradient(135deg, #FF6B6B, #EE5A6F);">
+                                Query<br>[${mhsa.headDim}d]
+                            </div>
+                            <small>What to look for</small>
+                        </div>
+                    </div>
+
+                    <div class="flow-diagram">
+                        <div class="flow-step">
+                            <div class="flow-box">Embedding<br>[${mhsa.embedDim}d]</div>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="flow-box" style="background: linear-gradient(135deg, #4ECDC4, #44A08D);">
+                                Key<br>[${mhsa.headDim}d]
+                            </div>
+                            <small>What I offer</small>
+                        </div>
+                    </div>
+
+                    <div class="flow-diagram">
+                        <div class="flow-step">
+                            <div class="flow-box">Embedding<br>[${mhsa.embedDim}d]</div>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="flow-box" style="background: linear-gradient(135deg, #95E1D3, #74C7BB);">
+                                Value<br>[${mhsa.headDim}d]
+                            </div>
+                            <small>Actual content</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meaning-box">
+                    <h4>🎯 How Meaning Emerges</h4>
+                    <p><strong>Step 1: Projection Matrices Learn Semantic Roles</strong></p>
+                    <p>The weight matrices W<sup>Q</sup>, W<sup>K</sup>, W<sup>V</sup> are learned during training. They transform the generic embedding into specialized representations:</p>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li><span class="highlight-query">Query (Q)</span> encodes what information this token needs (e.g., "cat" might query for subjects or animals)</li>
+                        <li><span class="highlight-key">Key (K)</span> encodes what information this token can provide (e.g., "sat" might provide action information)</li>
+                        <li><span class="highlight-value">Value (V)</span> contains the semantic content to be retrieved</li>
+                    </ul>
+                </div>
+
+                <div class="qkv-grid">
+                    <div class="qkv-card qkv-query">
+                        <h3>🔍 Query Vectors (Head 1)</h3>
+                        <p style="font-size: 0.9em; margin-bottom: 10px;">Q = Embedding × W<sup>Q</sup></p>
+                        <div class="vector-display">
+            `;
+
+            tokens.forEach((token, i) => {
+                html += `<div class="vector-row"><strong>${token}:</strong> [${head0.Q[i].slice(0, 6).map(v => v.toFixed(3)).join(', ')}...]</div>`;
+            });
+
+            html += `
+                        </div>
+                        <small>Each row shows what that token is "asking for"</small>
+                    </div>
+
+                    <div class="qkv-card qkv-key">
+                        <h3>🔑 Key Vectors (Head 1)</h3>
+                        <p style="font-size: 0.9em; margin-bottom: 10px;">K = Embedding × W<sup>K</sup></p>
+                        <div class="vector-display">
+            `;
+
+            tokens.forEach((token, i) => {
+                html += `<div class="vector-row"><strong>${token}:</strong> [${head0.K[i].slice(0, 6).map(v => v.toFixed(3)).join(', ')}...]</div>`;
+            });
+
+            html += `
+                        </div>
+                        <small>Each row shows what that token "offers"</small>
+                    </div>
+
+                    <div class="qkv-card qkv-value">
+                        <h3>💎 Value Vectors (Head 1)</h3>
+                        <p style="font-size: 0.9em; margin-bottom: 10px;">V = Embedding × W<sup>V</sup></p>
+                        <div class="vector-display">
+            `;
+
+            tokens.forEach((token, i) => {
+                html += `<div class="vector-row"><strong>${token}:</strong> [${head0.V[i].slice(0, 6).map(v => v.toFixed(3)).join(', ')}...]</div>`;
+            });
+
+            html += `
+                        </div>
+                        <small>Each row contains the actual information</small>
+                    </div>
+                </div>
+
+                <div class="math-step">
+                    <h4>📊 Projection Weight Matrices (Head 1)</h4>
+                    <p>These matrices transform ${mhsa.embedDim}-dimensional embeddings into ${mhsa.headDim}-dimensional Q/K/V vectors:</p>
+                    <canvas id="weightMatrixCanvas" class="interaction-canvas"></canvas>
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            // Draw weight matrix visualization
+            setTimeout(() => {
+                drawWeightMatrixVisualization(mhsa);
+            }, 10);
+        }
+
+        function drawWeightMatrixVisualization(mhsa) {
+            const canvas = document.getElementById('weightMatrixCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const head = mhsa.heads[0];
+
+            canvas.width = 900;
+            canvas.height = 250;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const matrices = [
+                { matrix: head.Wq, name: 'W^Q', color: '#FF6B6B', x: 50 },
+                { matrix: head.Wk, name: 'W^K', color: '#4ECDC4', x: 350 },
+                { matrix: head.Wv, name: 'W^V', color: '#95E1D3', x: 650 }
+            ];
+
+            matrices.forEach(({ matrix, name, color, x }) => {
+                const rows = Math.min(matrix.length, 16);
+                const cols = Math.min(matrix[0].length, 8);
+                const cellSize = 8;
+
+                // Draw matrix
+                for (let i = 0; i < rows; i++) {
+                    for (let j = 0; j < cols; j++) {
+                        const val = matrix[i][j];
+                        const normalized = (val + 0.5); // Normalize to [0, 1]
+                        const intensity = Math.floor(normalized * 255);
+                        ctx.fillStyle = `rgba(${color.slice(1, 3)}, ${color.slice(3, 5)}, ${color.slice(5, 7)}, ${normalized})`;
+                        ctx.fillRect(x + j * cellSize, 80 + i * cellSize, cellSize - 1, cellSize - 1);
+                    }
+                }
+
+                // Draw labels
+                ctx.fillStyle = '#495057';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(name, x + cols * cellSize / 2, 60);
+
+                ctx.font = '12px Arial';
+                ctx.fillText(`${matrix.length} × ${matrix[0].length}`, x + cols * cellSize / 2, 220);
+
+                // Draw border
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, 80, cols * cellSize, rows * cellSize);
+            });
+
+            // Add description
+            ctx.fillStyle = '#495057';
+            ctx.font = '13px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Each matrix learns to extract different semantic aspects during training', canvas.width / 2, 245);
+        }
+
+        function generateAttentionFlowVisualization(tokens, embeddings, mhsa, result) {
+            const container = document.getElementById('attentionFlow');
+            const head0 = result.headOutputs[0];
+
+            // Pick an example token to focus on
+            const focusIdx = Math.floor(tokens.length / 2);
+            const focusToken = tokens[focusIdx];
+
+            let html = `
+                <div class="meaning-box">
+                    <h4>🧠 How Attention Extracts Meaning: Example with "${focusToken}"</h4>
+                    <p>Let's trace how token "${focusToken}" (position ${focusIdx + 1}) gathers information from other tokens:</p>
+                </div>
+
+                <div class="math-step">
+                    <h4>Step 1: Compute Attention Scores (Q · K<sup>T</sup>)</h4>
+                    <p>The <span class="highlight-query">query</span> of "${focusToken}" is compared with the <span class="highlight-key">keys</span> of all tokens via dot product:</p>
+                    <div class="flow-diagram" style="flex-wrap: wrap;">
+            `;
+
+            tokens.forEach((token, i) => {
+                const score = head0.scores[focusIdx][i];
+                const weight = head0.attentionWeights[focusIdx][i];
+                html += `
+                    <div class="flow-step" style="flex: 1; min-width: 120px;">
+                        <div class="flow-box" style="background: rgba(102, 126, 234, ${weight});">
+                            ${token}
+                        </div>
+                        <small>Score: ${score.toFixed(3)}<br>Weight: ${weight.toFixed(3)}</small>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                    <div class="info-box">
+                        <strong>What's happening:</strong> High dot product (Q·K) means the query and key are aligned in the learned semantic space. 
+                        For example, if "cat" learns to query for subjects, and "sat" has a key indicating it's a verb, their dot product will be high.
+                    </div>
+                </div>
+
+                <div class="math-step">
+                    <h4>Step 2: Softmax Normalization</h4>
+                    <p>Raw scores are converted to probabilities that sum to 1:</p>
+                    <canvas id="softmaxCanvas" class="interaction-canvas"></canvas>
+                </div>
+
+                <div class="math-step">
+                    <h4>Step 3: Weighted Aggregation of Values</h4>
+                    <p>The attention weights determine how much of each token's <span class="highlight-value">value</span> vector to include:</p>
+                    <div class="formula">
+                        output[${focusToken}] = ${tokens.map((t, i) => 
+                            `${head0.attentionWeights[focusIdx][i].toFixed(2)} × V[${t}]`
+                        ).join(' + ')}
+                    </div>
+                    <p style="margin-top: 10px;">This weighted sum creates a context-aware representation of "${focusToken}" based on the entire sequence.</p>
+                </div>
+
+                <div class="math-step">
+                    <h4>Visualizing the Aggregation</h4>
+                    <canvas id="aggregationCanvas" class="interaction-canvas"></canvas>
+                </div>
+
+                <div class="meaning-box">
+                    <h4>🎓 Key Insights on Semantic Understanding</h4>
+                    <ol style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+                        <li><strong>Learned Representations:</strong> During training, the projection matrices learn to encode linguistic patterns. W<sup>Q</sup> might learn to encode "what grammatical role does this word need to find?", W<sup>K</sup> encodes "what role do I play?", and W<sup>V</sup> holds the actual semantic content.</li>
+                        
+                        <li><strong>Dynamic Contextualization:</strong> Unlike static word embeddings, attention creates context-dependent representations. The word "bank" gets different representations in "river bank" vs "bank account" because it attends to different neighboring words.</li>
+                        
+                        <li><strong>Multiple Heads = Multiple Perspectives:</strong> With ${mhsa.numHeads} heads, the model can simultaneously attend to different aspects: one head might capture syntax, another semantics, another long-range dependencies.</li>
+                        
+                        <li><strong>Information Routing:</strong> Attention acts as a soft routing mechanism, allowing information to flow from relevant tokens to where it's needed. High attention = "this token is relevant to understanding me".</li>
+                        
+                        <li><strong>Permutation Invariance:</strong> Self-attention doesn't care about the order of tokens inherently (that's why positional encodings are added separately). It learns relationships based purely on content.</li>
+                    </ol>
+                </div>
+
+                <div class="math-step">
+                    <h4>🔄 Comparison: Before and After Attention</h4>
+                    <canvas id="comparisonCanvas" class="interaction-canvas"></canvas>
+                    <p style="margin-top: 10px; text-align: center;">
+                        <strong>Before:</strong> Static embedding based only on the token itself<br>
+                        <strong>After:</strong> Contextualized representation incorporating information from the entire sequence
+                    </p>
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            // Draw visualizations
+            setTimeout(() => {
+                drawSoftmaxVisualization(tokens, focusIdx, head0);
+                drawAggregationVisualization(tokens, focusIdx, head0);
+                drawComparisonVisualization(embeddings, result.output, focusIdx, tokens[focusIdx]);
+            }, 10);
+        }
+
+        function drawSoftmaxVisualization(tokens, focusIdx, head0) {
+            const canvas = document.getElementById('softmaxCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = 600;
+            canvas.height = 300;
+
+            const scores = head0.scores[focusIdx];
+            const weights = head0.attentionWeights[focusIdx];
+
+            const barWidth = 80;
+            const gap = 20;
+            const startX = (canvas.width - tokens.length * (barWidth + gap)) / 2;
+            const baseY = 250;
+
+            // Draw bars for before and after
+            tokens.forEach((token, i) => {
+                const x = startX + i * (barWidth + gap);
+                
+                // Raw score (scaled for visualization)
+                const scoreHeight = Math.min(Math.abs(scores[i]) * 30, 60);
+                ctx.fillStyle = 'rgba(255, 107, 107, 0.6)';
+                ctx.fillRect(x, baseY - scoreHeight - 80, barWidth / 2 - 5, scoreHeight);
+
+                // Softmax weight
+                const weightHeight = weights[i] * 120;
+                ctx.fillStyle = 'rgba(102, 126, 234, 0.8)';
+                ctx.fillRect(x + barWidth / 2, baseY - weightHeight - 80, barWidth / 2 - 5, weightHeight);
+
+                // Labels
+                ctx.fillStyle = '#495057';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(token, x + barWidth / 2, baseY - 60);
+                ctx.font = '10px Arial';
+                ctx.fillText(`${scores[i].toFixed(2)}`, x + barWidth / 4, baseY - scoreHeight - 85);
+                ctx.fillText(`${weights[i].toFixed(2)}`, x + 3 * barWidth / 4, baseY - weightHeight - 85);
+            });
+
+            // Legend
+            ctx.fillStyle = 'rgba(255, 107, 107, 0.6)';
+            ctx.fillRect(20, 20, 15, 15);
+            ctx.fillStyle = '#495057';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Raw Scores (Q·K)', 40, 32);
+
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.8)';
+            ctx.fillRect(20, 40, 15, 15);
+            ctx.fillStyle = '#495057';
+            ctx.fillText('After Softmax (Attention Weights)', 40, 52);
+        }
+
+        function drawAggregationVisualization(tokens, focusIdx, head0) {
+            const canvas = document.getElementById('aggregationCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = 600;
+            canvas.height = 400;
+
+            const weights = head0.attentionWeights[focusIdx];
+            const values = head0.V;
+
+            // Draw value vectors as bars
+            const numDims = 8; // Show first 8 dimensions
+            const barWidth = 60;
+            const gap = 10;
+            const dimHeight = 30;
+
+            let startY = 50;
+
+            tokens.forEach((token, tokenIdx) => {
+                const weight = weights[tokenIdx];
+                const x = 50;
+
+                // Token label
+                ctx.fillStyle = '#495057';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'right';
+                ctx.fillText(`${token} (${weight.toFixed(2)}×)`, x - 10, startY + 15);
+
+                // Draw value vector bars
+                for (let dim = 0; dim < numDims; dim++) {
+                    const val = values[tokenIdx][dim];
+                    const weightedVal = val * weight;
+                    const barLen = Math.abs(val) * 40;
+                    const weightedBarLen = Math.abs(weightedVal) * 40;
+
+                    // Original value (faint)
+                    ctx.fillStyle = 'rgba(149, 225, 211, 0.3)';
+                    ctx.fillRect(x + dim * (barWidth / numDims), startY, barWidth / numDims - 2, 10);
+
+                    // Weighted value
+                    const hue = weightedVal > 0 ? 150 : 0;
+                    ctx.fillStyle = `hsla(${hue}, 70%, 50%, ${Math.abs(weight)})`;
+                    ctx.fillRect(x + dim * (barWidth / numDims), startY, (barWidth / numDims - 2) * Math.min(Math.abs(weightedVal) * 5, 1), 10);
+                }
+
+                startY += 20;
+            });
+
+            // Title
+            ctx.fillStyle = '#495057';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Each row: Value vector × Attention weight', 50, 30);
+
+            ctx.font = '11px Arial';
+            ctx.fillText('Higher attention weight = more contribution to final output', 50, startY + 20);
+        }
+
+        function drawComparisonVisualization(embeddings, outputs, focusIdx, token) {
+            const canvas = document.getElementById('comparisonCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = 600;
+            canvas.height = 300;
+
+            const numDims = Math.min(embeddings[focusIdx].length, 32);
+            const barWidth = 500 / numDims;
+            const startX = 50;
+
+            // Draw input embedding
+            let y = 80;
+            ctx.fillStyle = '#495057';
+            ctx.font = 'bold 13px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Input Embedding of "${token}"`, startX, y - 10);
+
+            for (let i = 0; i < numDims; i++) {
+                const val = embeddings[focusIdx][i];
+                const height = Math.abs(val) * 50;
+                ctx.fillStyle = val > 0 ? 'rgba(102, 126, 234, 0.6)' : 'rgba(234, 102, 126, 0.6)';
+                ctx.fillRect(startX + i * barWidth, y + 50 - height, barWidth - 1, height);
+            }
+
+            // Draw output
+            y = 180;
+            ctx.fillStyle = '#495057';
+            ctx.font = 'bold 13px Arial';
+            ctx.fillText(`Contextualized Output of "${token}"`, startX, y - 10);
+
+            for (let i = 0; i < numDims; i++) {
+                const val = outputs[focusIdx][i];
+                const height = Math.abs(val) * 50;
+                ctx.fillStyle = val > 0 ? 'rgba(118, 75, 162, 0.8)' : 'rgba(162, 75, 118, 0.8)';
+                ctx.fillRect(startX + i * barWidth, y + 50 - height, barWidth - 1, height);
+            }
+
+            // Arrow
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(20, 110);
+            ctx.lineTo(20, 190);
+            ctx.stroke();
+
+            // Arrowhead
+            ctx.beginPath();
+            ctx.moveTo(15, 180);
+            ctx.lineTo(20, 190);
+            ctx.lineTo(25, 180);
+            ctx.fillStyle = '#667eea';
+            ctx.fill();
+
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 12px Arial';
+            ctx.save();
+            ctx.translate(10, 150);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('ATTENTION', 0, 0);
+            ctx.restore();
         }
 
         // Run on page load
