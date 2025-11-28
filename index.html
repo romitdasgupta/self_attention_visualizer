@@ -1075,6 +1075,445 @@
             line-height: 1.7;
             margin: 0;
         }
+
+        /* Transformer Architecture Visualization Styles */
+        .transformer-architecture {
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .transformer-architecture::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .arch-title {
+            color: #00d4ff;
+            font-size: 1.4em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .transformer-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .transformer-layer {
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .layer-wrapper {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 8px 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .layer-wrapper:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .layer-wrapper.highlighted {
+            border-color: #00d4ff;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3), inset 0 0 30px rgba(0, 212, 255, 0.05);
+        }
+
+        .layer-label {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .layer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .arch-component {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .arch-component:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .arch-component.mha {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            border-color: #667eea;
+        }
+
+        .arch-component.mha:hover, .arch-component.mha.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.5), rgba(118, 75, 162, 0.5));
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .arch-component.ffn {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(68, 160, 141, 0.2));
+            border-color: #4ECDC4;
+        }
+
+        .arch-component.norm {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 152, 0, 0.2));
+            border-color: #ffc107;
+            min-width: 80px;
+            padding: 8px 15px;
+        }
+
+        .arch-component.residual {
+            background: transparent;
+            border: 2px dashed rgba(132, 250, 176, 0.5);
+            min-width: auto;
+            padding: 8px;
+        }
+
+        .component-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .component-name {
+            color: #fff;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .component-detail {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 10px;
+        }
+
+        .arch-arrow {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 24px;
+            font-weight: 300;
+        }
+
+        .arch-arrow.vertical {
+            display: block;
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        /* Multi-Head Detail View */
+        .mha-detail-container {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mha-detail-title {
+            color: #00d4ff;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .heads-parallel-view {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .head-unit {
+            background: linear-gradient(180deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border: 2px solid rgba(102, 126, 234, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 100px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .head-unit:hover, .head-unit.active {
+            border-color: #00d4ff;
+            background: linear-gradient(180deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 100%);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .head-unit::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            width: 2px;
+            height: 15px;
+            background: linear-gradient(to bottom, rgba(102, 126, 234, 0.5), transparent);
+        }
+
+        .head-number {
+            color: #00d4ff;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .head-qkv {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .head-qkv-item {
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .head-qkv-item.q { background: #FF6B6B; }
+        .head-qkv-item.k { background: #4ECDC4; }
+        .head-qkv-item.v { background: #95E1D3; }
+
+        .head-dim {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 9px;
+        }
+
+        .concat-bar {
+            background: linear-gradient(90deg, 
+                #FF6B6B 0%, #FF6B6B 20%, 
+                #4ECDC4 20%, #4ECDC4 40%, 
+                #95E1D3 40%, #95E1D3 60%,
+                #F7DC6F 60%, #F7DC6F 80%,
+                #DDA0DD 80%, #DDA0DD 100%);
+            height: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .concat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 11px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        /* Data Flow Visualization */
+        .data-flow-viz {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .flow-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-node-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px 18px;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .flow-node-box.input { border-color: #a8edea; color: #a8edea; }
+        .flow-node-box.qkv-proj { border-color: #667eea; color: #667eea; }
+        .flow-node-box.attention { border-color: #ffc107; color: #ffc107; }
+        .flow-node-box.output { border-color: #84fab0; color: #84fab0; }
+
+        .flow-connector {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 18px;
+        }
+
+        .flow-dim {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 10px;
+        }
+
+        /* Architecture Info Panel */
+        .arch-info-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .arch-info-panel h4 {
+            color: #00d4ff;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .arch-info-panel p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .arch-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .arch-stat {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .arch-stat-value {
+            color: #00d4ff;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .arch-stat-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        /* Layer Nx indicator */
+        .layer-repeat-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        .layer-repeat-indicator strong {
+            color: #00d4ff;
+        }
+
+        /* Connection lines animation */
+        .connection-pulse {
+            animation: pulseFlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseFlow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* Encoder-Decoder View Toggle */
+        .arch-view-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .arch-toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .arch-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .arch-toggle-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .heads-parallel-view {
+                gap: 8px;
+            }
+            .head-unit {
+                min-width: 80px;
+                padding: 10px;
+            }
+            .layer-content {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1124,6 +1563,69 @@
             <div class="section">
                 <div class="section-title">Architecture Overview</div>
                 <div id="architectureInfo"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Transformer Architecture: Where Multi-Head Attention Lives</div>
+                <div class="transformer-architecture">
+                    <div class="arch-title">🔮 Transformer Encoder Block</div>
+                    
+                    <div class="arch-view-toggle">
+                        <button class="arch-toggle-btn active" onclick="setArchView('encoder')">Encoder</button>
+                        <button class="arch-toggle-btn" onclick="setArchView('decoder')">Decoder</button>
+                        <button class="arch-toggle-btn" onclick="setArchView('full')">Full Model</button>
+                    </div>
+
+                    <div id="architectureView" class="transformer-stack">
+                        <!-- Dynamic architecture visualization will be inserted here -->
+                    </div>
+
+                    <div class="mha-detail-container" id="mhaDetailView">
+                        <div class="mha-detail-title">🎯 Multi-Head Attention: Parallel Processing</div>
+                        
+                        <div class="data-flow-viz">
+                            <div class="flow-node">
+                                <div class="flow-node-box input">Input X</div>
+                                <div class="flow-dim" id="flowInputDim">[n × d_model]</div>
+                            </div>
+                            <div class="flow-connector connection-pulse">→</div>
+                            <div class="flow-node">
+                                <div class="flow-node-box qkv-proj">Linear Projections</div>
+                                <div class="flow-dim">W<sup>Q</sup>, W<sup>K</sup>, W<sup>V</sup></div>
+                            </div>
+                            <div class="flow-connector connection-pulse">→</div>
+                            <div class="flow-node">
+                                <div class="flow-node-box attention">Parallel Heads</div>
+                                <div class="flow-dim" id="flowHeadsDim">[h × n × d_k]</div>
+                            </div>
+                            <div class="flow-connector connection-pulse">→</div>
+                            <div class="flow-node">
+                                <div class="flow-node-box output">Concat + W<sup>O</sup></div>
+                                <div class="flow-dim" id="flowOutputDim">[n × d_model]</div>
+                            </div>
+                        </div>
+
+                        <div id="headsParallelView" class="heads-parallel-view">
+                            <!-- Dynamic heads will be inserted here -->
+                        </div>
+
+                        <div id="concatViz" class="concat-bar"></div>
+                        <div class="concat-label">Concatenated Head Outputs → Output Projection W<sup>O</sup></div>
+
+                        <div class="arch-stats" id="archStats">
+                            <!-- Dynamic stats will be inserted here -->
+                        </div>
+                    </div>
+
+                    <div class="arch-info-panel">
+                        <h4>💡 How It Connects to the Visualization Above</h4>
+                        <p id="archConnectionInfo">
+                            Click on any attention head above to see its specific attention pattern in the "Individual Heads" tab. 
+                            Each head learns different patterns - some focus on local context (adjacent words), 
+                            others capture long-range dependencies or syntactic structures.
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <div class="tabs">
@@ -1214,6 +1716,476 @@
         let currentStep = 0;
         let totalSteps = 9;
         let sequenceData = null;
+        let currentArchView = 'encoder';
+        let selectedHead = null;
+
+        // ============== Transformer Architecture Visualization ==============
+
+        function setArchView(view) {
+            currentArchView = view;
+            document.querySelectorAll('.arch-toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(view)) {
+                    btn.classList.add('active');
+                }
+            });
+            renderArchitectureView();
+        }
+
+        function renderArchitectureView() {
+            const container = document.getElementById('architectureView');
+            const embedDim = parseInt(document.getElementById('embedDim').value) || 64;
+            const numHeads = parseInt(document.getElementById('numHeads').value) || 4;
+            const headDim = Math.floor(embedDim / numHeads);
+
+            let html = '';
+
+            if (currentArchView === 'encoder') {
+                html = generateEncoderView(embedDim, numHeads, headDim);
+            } else if (currentArchView === 'decoder') {
+                html = generateDecoderView(embedDim, numHeads, headDim);
+            } else {
+                html = generateFullModelView(embedDim, numHeads, headDim);
+            }
+
+            container.innerHTML = html;
+            updateMHADetailView(numHeads, embedDim, headDim);
+        }
+
+        function generateEncoderView(embedDim, numHeads, headDim) {
+            return `
+                <!-- Input -->
+                <div class="layer-wrapper" style="background: rgba(168, 237, 234, 0.1); border-color: rgba(168, 237, 234, 0.3);">
+                    <span class="layer-label" style="background: linear-gradient(135deg, #a8edea, #8fd3f4);">Input</span>
+                    <div class="layer-content">
+                        <div class="arch-component" style="border-color: #a8edea;">
+                            <div class="component-icon">📝</div>
+                            <div class="component-name">Token Embeddings</div>
+                            <div class="component-detail">[seq_len × ${embedDim}]</div>
+                        </div>
+                        <div class="arch-arrow">+</div>
+                        <div class="arch-component" style="border-color: #a8edea;">
+                            <div class="component-icon">📍</div>
+                            <div class="component-name">Positional Encoding</div>
+                            <div class="component-detail">[seq_len × ${embedDim}]</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arch-arrow vertical">↓</div>
+
+                <!-- Encoder Block -->
+                <div class="transformer-layer">
+                    <div class="layer-wrapper highlighted">
+                        <span class="layer-label">Encoder Block (N×)</span>
+                        
+                        <div style="display: flex; align-items: stretch; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                            <!-- Residual Connection 1 -->
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 300px;">
+                                <div style="color: rgba(255,255,255,0.5); font-size: 11px; margin-bottom: 10px;">Sublayer 1: Self-Attention</div>
+                                
+                                <div style="display: flex; align-items: center; gap: 10px; width: 100%; justify-content: center;">
+                                    <div class="arch-component residual" style="padding: 4px 8px;">
+                                        <div class="component-detail" style="color: #84fab0;">+ Residual</div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                                        <div class="arch-component norm" onclick="highlightComponent('norm1')">
+                                            <div class="component-name">LayerNorm</div>
+                                        </div>
+                                        <div class="arch-arrow">↓</div>
+                                        <div class="arch-component mha active" onclick="highlightMHA(); switchTab('heads');">
+                                            <div class="component-icon">🧠</div>
+                                            <div class="component-name">Multi-Head<br>Self-Attention</div>
+                                            <div class="component-detail">${numHeads} heads × ${headDim}d</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="arch-arrow" style="align-self: center;">→</div>
+
+                            <!-- Residual Connection 2 -->
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 300px;">
+                                <div style="color: rgba(255,255,255,0.5); font-size: 11px; margin-bottom: 10px;">Sublayer 2: Feed-Forward</div>
+                                
+                                <div style="display: flex; align-items: center; gap: 10px; width: 100%; justify-content: center;">
+                                    <div class="arch-component residual" style="padding: 4px 8px;">
+                                        <div class="component-detail" style="color: #84fab0;">+ Residual</div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                                        <div class="arch-component norm" onclick="highlightComponent('norm2')">
+                                            <div class="component-name">LayerNorm</div>
+                                        </div>
+                                        <div class="arch-arrow">↓</div>
+                                        <div class="arch-component ffn" onclick="highlightComponent('ffn')">
+                                            <div class="component-icon">⚡</div>
+                                            <div class="component-name">Feed-Forward<br>Network</div>
+                                            <div class="component-detail">${embedDim} → ${embedDim * 4} → ${embedDim}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layer-repeat-indicator">
+                        <span>🔄</span>
+                        <span>This block repeats <strong>N times</strong> (typically 6-12 layers in BERT/GPT)</span>
+                    </div>
+                </div>
+
+                <div class="arch-arrow vertical">↓</div>
+
+                <!-- Output -->
+                <div class="layer-wrapper" style="background: rgba(132, 250, 176, 0.1); border-color: rgba(132, 250, 176, 0.3);">
+                    <span class="layer-label" style="background: linear-gradient(135deg, #84fab0, #8fd3f4);">Output</span>
+                    <div class="layer-content">
+                        <div class="arch-component" style="border-color: #84fab0;">
+                            <div class="component-icon">✨</div>
+                            <div class="component-name">Contextualized Embeddings</div>
+                            <div class="component-detail">[seq_len × ${embedDim}]</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateDecoderView(embedDim, numHeads, headDim) {
+            return `
+                <!-- Input -->
+                <div class="layer-wrapper" style="background: rgba(168, 237, 234, 0.1); border-color: rgba(168, 237, 234, 0.3);">
+                    <span class="layer-label" style="background: linear-gradient(135deg, #a8edea, #8fd3f4);">Input (Shifted Right)</span>
+                    <div class="layer-content">
+                        <div class="arch-component" style="border-color: #a8edea;">
+                            <div class="component-icon">📝</div>
+                            <div class="component-name">Output Embeddings</div>
+                            <div class="component-detail">[seq_len × ${embedDim}]</div>
+                        </div>
+                        <div class="arch-arrow">+</div>
+                        <div class="arch-component" style="border-color: #a8edea;">
+                            <div class="component-icon">📍</div>
+                            <div class="component-name">Positional Encoding</div>
+                            <div class="component-detail">[seq_len × ${embedDim}]</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arch-arrow vertical">↓</div>
+
+                <!-- Decoder Block -->
+                <div class="transformer-layer">
+                    <div class="layer-wrapper highlighted">
+                        <span class="layer-label">Decoder Block (N×)</span>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <!-- Masked Self-Attention -->
+                            <div style="display: flex; align-items: center; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                                <div class="arch-component residual" style="padding: 4px 8px;">
+                                    <div class="component-detail" style="color: #84fab0;">+ Residual</div>
+                                </div>
+                                <div class="arch-component norm">
+                                    <div class="component-name">LayerNorm</div>
+                                </div>
+                                <div class="arch-arrow">→</div>
+                                <div class="arch-component mha" style="background: linear-gradient(135deg, rgba(255,107,107,0.3), rgba(118,75,162,0.3)); border-color: #FF6B6B;">
+                                    <div class="component-icon">🎭</div>
+                                    <div class="component-name">Masked Multi-Head<br>Self-Attention</div>
+                                    <div class="component-detail">${numHeads} heads (causal mask)</div>
+                                </div>
+                            </div>
+
+                            <!-- Cross-Attention -->
+                            <div style="display: flex; align-items: center; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                                <div class="arch-component residual" style="padding: 4px 8px;">
+                                    <div class="component-detail" style="color: #84fab0;">+ Residual</div>
+                                </div>
+                                <div class="arch-component norm">
+                                    <div class="component-name">LayerNorm</div>
+                                </div>
+                                <div class="arch-arrow">→</div>
+                                <div class="arch-component mha active" onclick="highlightMHA();">
+                                    <div class="component-icon">🔗</div>
+                                    <div class="component-name">Cross-Attention</div>
+                                    <div class="component-detail">Q from decoder, K,V from encoder</div>
+                                </div>
+                            </div>
+
+                            <!-- FFN -->
+                            <div style="display: flex; align-items: center; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                                <div class="arch-component residual" style="padding: 4px 8px;">
+                                    <div class="component-detail" style="color: #84fab0;">+ Residual</div>
+                                </div>
+                                <div class="arch-component norm">
+                                    <div class="component-name">LayerNorm</div>
+                                </div>
+                                <div class="arch-arrow">→</div>
+                                <div class="arch-component ffn">
+                                    <div class="component-icon">⚡</div>
+                                    <div class="component-name">Feed-Forward Network</div>
+                                    <div class="component-detail">${embedDim} → ${embedDim * 4} → ${embedDim}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layer-repeat-indicator">
+                        <span>🔄</span>
+                        <span>This block repeats <strong>N times</strong></span>
+                    </div>
+                </div>
+
+                <div class="arch-arrow vertical">↓</div>
+
+                <!-- Output -->
+                <div class="layer-wrapper" style="background: rgba(132, 250, 176, 0.1); border-color: rgba(132, 250, 176, 0.3);">
+                    <span class="layer-label" style="background: linear-gradient(135deg, #84fab0, #8fd3f4);">Output</span>
+                    <div class="layer-content">
+                        <div class="arch-component" style="border-color: #84fab0;">
+                            <div class="component-icon">📊</div>
+                            <div class="component-name">Linear + Softmax</div>
+                            <div class="component-detail">Vocabulary probabilities</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateFullModelView(embedDim, numHeads, headDim) {
+            return `
+                <div style="display: grid; grid-template-columns: 1fr 80px 1fr; gap: 20px; width: 100%;">
+                    <!-- Encoder Side -->
+                    <div>
+                        <div style="text-align: center; color: #00d4ff; font-weight: 700; margin-bottom: 15px; font-size: 14px;">ENCODER</div>
+                        
+                        <div class="layer-wrapper" style="background: rgba(168, 237, 234, 0.05);">
+                            <span class="layer-label" style="font-size: 9px;">Input</span>
+                            <div class="layer-content" style="flex-direction: column; gap: 5px;">
+                                <div class="arch-component" style="min-width: auto; padding: 8px 12px;">
+                                    <div class="component-name" style="font-size: 11px;">Embeddings + Pos</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="arch-arrow vertical" style="margin: 8px 0;">↓</div>
+
+                        <div class="layer-wrapper highlighted" style="padding: 12px;">
+                            <span class="layer-label" style="font-size: 9px;">Encoder ×N</span>
+                            <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                                <div class="arch-component mha active" style="min-width: auto; padding: 10px;" onclick="highlightMHA();">
+                                    <div class="component-name" style="font-size: 10px;">Self-Attention</div>
+                                    <div class="component-detail" style="font-size: 8px;">${numHeads} heads</div>
+                                </div>
+                                <div class="arch-component ffn" style="min-width: auto; padding: 10px;">
+                                    <div class="component-name" style="font-size: 10px;">FFN</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Connection Arrow -->
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                            <div style="color: rgba(255,255,255,0.5); font-size: 10px;">K, V</div>
+                            <div style="font-size: 24px; color: #ffc107;">→</div>
+                        </div>
+                    </div>
+
+                    <!-- Decoder Side -->
+                    <div>
+                        <div style="text-align: center; color: #00d4ff; font-weight: 700; margin-bottom: 15px; font-size: 14px;">DECODER</div>
+                        
+                        <div class="layer-wrapper" style="background: rgba(168, 237, 234, 0.05);">
+                            <span class="layer-label" style="font-size: 9px;">Output (shifted)</span>
+                            <div class="layer-content" style="flex-direction: column; gap: 5px;">
+                                <div class="arch-component" style="min-width: auto; padding: 8px 12px;">
+                                    <div class="component-name" style="font-size: 11px;">Embeddings + Pos</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="arch-arrow vertical" style="margin: 8px 0;">↓</div>
+
+                        <div class="layer-wrapper" style="padding: 12px;">
+                            <span class="layer-label" style="font-size: 9px;">Decoder ×N</span>
+                            <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                                <div class="arch-component mha" style="min-width: auto; padding: 10px; border-color: #FF6B6B;">
+                                    <div class="component-name" style="font-size: 10px;">Masked Self-Attn</div>
+                                </div>
+                                <div class="arch-component mha" style="min-width: auto; padding: 10px;">
+                                    <div class="component-name" style="font-size: 10px;">Cross-Attention</div>
+                                </div>
+                                <div class="arch-component ffn" style="min-width: auto; padding: 10px;">
+                                    <div class="component-name" style="font-size: 10px;">FFN</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="arch-arrow vertical" style="margin: 8px 0;">↓</div>
+
+                        <div class="layer-wrapper" style="background: rgba(132, 250, 176, 0.05);">
+                            <span class="layer-label" style="font-size: 9px;">Output</span>
+                            <div class="layer-content">
+                                <div class="arch-component" style="min-width: auto; padding: 8px 12px; border-color: #84fab0;">
+                                    <div class="component-name" style="font-size: 11px;">Softmax</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layer-repeat-indicator" style="margin-top: 20px;">
+                    <span>📖</span>
+                    <span>Original Transformer: Encoder maps input → representations, Decoder generates output autoregressively</span>
+                </div>
+            `;
+        }
+
+        function updateMHADetailView(numHeads, embedDim, headDim) {
+            const tokens = document.getElementById('inputText').value.trim().split(/\s+/);
+            const seqLen = tokens.length;
+
+            // Update flow dimensions
+            document.getElementById('flowInputDim').textContent = `[${seqLen} × ${embedDim}]`;
+            document.getElementById('flowHeadsDim').textContent = `[${numHeads} × ${seqLen} × ${headDim}]`;
+            document.getElementById('flowOutputDim').textContent = `[${seqLen} × ${embedDim}]`;
+
+            // Render parallel heads
+            const headColors = ['#FF6B6B', '#4ECDC4', '#95E1D3', '#F7DC6F', '#DDA0DD', '#87CEEB', '#FFA07A', '#98D8C8'];
+            const headsContainer = document.getElementById('headsParallelView');
+            
+            let headsHtml = '';
+            for (let h = 0; h < numHeads; h++) {
+                headsHtml += `
+                    <div class="head-unit ${selectedHead === h ? 'active' : ''}" 
+                         onclick="selectHead(${h})"
+                         style="border-color: ${headColors[h % headColors.length]}40;">
+                        <div class="head-number" style="color: ${headColors[h % headColors.length]};">Head ${h + 1}</div>
+                        <div class="head-qkv">
+                            <div class="head-qkv-item q">Q</div>
+                            <div class="head-qkv-item k">K</div>
+                            <div class="head-qkv-item v">V</div>
+                        </div>
+                        <div class="head-dim">${seqLen}×${headDim}</div>
+                    </div>
+                `;
+            }
+            headsContainer.innerHTML = headsHtml;
+
+            // Update concat bar gradient
+            const concatBar = document.getElementById('concatViz');
+            const gradientStops = headColors.slice(0, numHeads).map((color, i) => {
+                const start = (i / numHeads * 100).toFixed(1);
+                const end = ((i + 1) / numHeads * 100).toFixed(1);
+                return `${color} ${start}%, ${color} ${end}%`;
+            }).join(', ');
+            concatBar.style.background = `linear-gradient(90deg, ${gradientStops})`;
+
+            // Update stats
+            const statsContainer = document.getElementById('archStats');
+            statsContainer.innerHTML = `
+                <div class="arch-stat">
+                    <div class="arch-stat-value">${numHeads}</div>
+                    <div class="arch-stat-label">Attention Heads</div>
+                </div>
+                <div class="arch-stat">
+                    <div class="arch-stat-value">${headDim}</div>
+                    <div class="arch-stat-label">Head Dimension (d_k)</div>
+                </div>
+                <div class="arch-stat">
+                    <div class="arch-stat-value">${embedDim}</div>
+                    <div class="arch-stat-label">Model Dimension</div>
+                </div>
+                <div class="arch-stat">
+                    <div class="arch-stat-value">${seqLen}×${seqLen}</div>
+                    <div class="arch-stat-label">Attention Matrix</div>
+                </div>
+                <div class="arch-stat">
+                    <div class="arch-stat-value">${(numHeads * headDim * headDim * 3 + numHeads * headDim * embedDim).toLocaleString()}</div>
+                    <div class="arch-stat-label">MHA Parameters</div>
+                </div>
+            `;
+        }
+
+        function selectHead(headIndex) {
+            selectedHead = headIndex;
+            
+            // Update visual selection
+            document.querySelectorAll('.head-unit').forEach((el, idx) => {
+                if (idx === headIndex) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+
+            // Switch to heads tab and scroll to the specific head
+            switchTabDirect('heads');
+            
+            // Scroll to the specific head canvas after a short delay
+            setTimeout(() => {
+                const headCanvas = document.getElementById(`headCanvas${headIndex}`);
+                if (headCanvas) {
+                    headCanvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Add a temporary highlight effect
+                    const headContainer = headCanvas.closest('.head-container');
+                    if (headContainer) {
+                        headContainer.style.boxShadow = '0 0 30px rgba(0, 212, 255, 0.5)';
+                        headContainer.style.borderColor = '#00d4ff';
+                        setTimeout(() => {
+                            headContainer.style.boxShadow = '';
+                            headContainer.style.borderColor = '';
+                        }, 2000);
+                    }
+                }
+            }, 100);
+
+            // Update info panel
+            document.getElementById('archConnectionInfo').innerHTML = `
+                <strong>Viewing Head ${headIndex + 1}:</strong> Scroll down to the "Individual Heads" section to see 
+                this head's unique attention pattern. Notice how it might focus on different relationships than other heads - 
+                this is the power of multi-head attention: each head can specialize in different linguistic patterns!
+            `;
+        }
+
+        function highlightMHA() {
+            // Visual feedback
+            document.querySelectorAll('.arch-component.mha').forEach(el => {
+                el.classList.add('active');
+            });
+            
+            // Update info panel
+            document.getElementById('archConnectionInfo').innerHTML = `
+                <strong>Multi-Head Self-Attention</strong> is the heart of the Transformer! It allows each position 
+                to attend to all positions in the previous layer. The "multi-head" aspect means we run attention 
+                in parallel across ${document.getElementById('numHeads').value} different representation subspaces, 
+                then concatenate and project the results. Explore the tabs below to see the full computation!
+            `;
+        }
+
+        function highlightComponent(component) {
+            // Could expand to show details about other components
+            const descriptions = {
+                'norm1': 'Layer Normalization stabilizes training by normalizing activations. Applied before attention (Pre-LN variant).',
+                'norm2': 'Second Layer Normalization, applied before the feed-forward network.',
+                'ffn': 'Feed-Forward Network: Two linear transformations with a ReLU/GELU activation in between. Expands then contracts dimensions.'
+            };
+            
+            if (descriptions[component]) {
+                document.getElementById('archConnectionInfo').innerHTML = `<strong>${component.toUpperCase()}:</strong> ${descriptions[component]}`;
+            }
+        }
+
+        function switchTabDirect(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            document.querySelectorAll('.tab').forEach(t => {
+                if (t.textContent.toLowerCase().includes(tabName)) {
+                    t.classList.add('active');
+                }
+            });
+            document.getElementById(tabName).classList.add('active');
+        }
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1592,6 +2564,9 @@
 
             // Render initial step
             renderStep();
+
+            // Render architecture visualization
+            renderArchitectureView();
         }
 
         function averageAttentions(attentions) {
@@ -3278,6 +4253,7 @@
         // Run on page load
         window.onload = function() {
             runAttention();
+            renderArchitectureView();
         };
     </script>
 </body>
