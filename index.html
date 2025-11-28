@@ -448,6 +448,327 @@
             font-size: 1.5em;
             color: #667eea;
         }
+
+        /* Sequence Visualization Styles */
+        .sequence-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .seq-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .seq-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .seq-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .seq-btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .seq-btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .step-indicator {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .step-progress {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0 30px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.4s ease;
+            width: 11.11%;
+        }
+
+        .sequence-visualization {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            min-height: 500px;
+            margin: 20px 0;
+        }
+
+        .step-content {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .step-description {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #495057;
+            margin-bottom: 20px;
+        }
+
+        .computation-visual {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .data-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .data-box {
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 8px;
+            padding: 15px 20px;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .data-box.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .data-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .data-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .operation-symbol {
+            font-size: 36px;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .matrix-viz-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .matrix-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+        }
+
+        .matrix-card.highlight {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .matrix-label {
+            font-weight: 700;
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .mini-matrix {
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .step-navigator {
+            margin-top: 30px;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .nav-step {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .nav-step:hover {
+            border-color: #667eea;
+            background: #e7f3ff;
+        }
+
+        .nav-step.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .nav-step-num {
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .nav-step-name {
+            font-size: 11px;
+        }
+
+        .attention-computation-viz {
+            margin: 20px 0;
+        }
+
+        .token-row {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            align-items: center;
+        }
+
+        .token-cell {
+            flex: 1;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 12px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .token-cell.highlight {
+            border-color: #667eea;
+            background: #e7f3ff;
+            transform: scale(1.05);
+        }
+
+        .formula-box {
+            background: #fffbf0;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .visual-equation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .eq-component {
+            padding: 15px 25px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+        }
+
+        .eq-operator {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 600;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -501,6 +822,7 @@
 
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('overview')">Overview</button>
+                <button class="tab" onclick="switchTab('sequence')">Step-by-Step Sequence</button>
                 <button class="tab" onclick="switchTab('heads')">Individual Heads</button>
                 <button class="tab" onclick="switchTab('mathematics')">Mathematics</button>
             </div>
@@ -514,6 +836,33 @@
                     </div>
                     <div class="info-box">
                         <strong>What's happening:</strong> This shows the average attention pattern across all heads. Each cell (i,j) shows how much token i attends to token j.
+                    </div>
+                </div>
+            </div>
+
+            <div id="sequence" class="tab-content">
+                <div class="section">
+                    <div class="section-title">Step-by-Step Computation Sequence</div>
+                    
+                    <div class="sequence-controls">
+                        <button class="seq-btn" onclick="previousStep()">◀ Previous</button>
+                        <span id="stepIndicator" class="step-indicator">Step 1 of 9</span>
+                        <button class="seq-btn" onclick="nextStep()">Next ▶</button>
+                        <button class="seq-btn-secondary" onclick="resetSequence()">Reset</button>
+                    </div>
+
+                    <div class="step-progress">
+                        <div id="progressBar" class="progress-bar"></div>
+                    </div>
+
+                    <div id="sequenceVisualization" class="sequence-visualization">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
+
+                    <div class="step-navigator">
+                        <div class="nav-grid" id="stepNavGrid">
+                            <!-- Step navigation buttons will be inserted here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -556,6 +905,9 @@
 
     <script>
         let currentAttention = null;
+        let currentStep = 0;
+        let totalSteps = 9;
+        let sequenceData = null;
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -563,6 +915,62 @@
 
             event.target.classList.add('active');
             document.getElementById(tabName).classList.add('active');
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                renderStep();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderStep();
+            }
+        }
+
+        function goToStep(step) {
+            currentStep = step;
+            renderStep();
+        }
+
+        function resetSequence() {
+            currentStep = 0;
+            renderStep();
+        }
+
+        function renderStep() {
+            if (!sequenceData) return;
+
+            const progress = ((currentStep + 1) / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('stepIndicator').textContent = `Step ${currentStep + 1} of ${totalSteps}`;
+
+            // Update navigator
+            document.querySelectorAll('.nav-step').forEach((el, idx) => {
+                if (idx === currentStep) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+
+            // Render current step content
+            const container = document.getElementById('sequenceVisualization');
+            container.innerHTML = generateStepContent(currentStep, sequenceData);
+
+            // Render step-specific canvases after DOM update
+            setTimeout(() => {
+                if (currentStep === 5) {
+                    const canvas = document.getElementById('stepSoftmaxCanvas');
+                    if (canvas) {
+                        const head0 = sequenceData.result.headOutputs[0];
+                        drawStepSoftmaxCanvas(canvas, sequenceData.tokens, sequenceData.focusToken, head0);
+                    }
+                }
+            }, 10);
         }
 
         class MultiHeadSelfAttention {
@@ -869,6 +1277,15 @@
 
             // Generate attention flow visualization
             generateAttentionFlowVisualization(tokens, embeddings, mhsa, result);
+
+            // Prepare sequence data
+            prepareSequenceData(tokens, embeddings, mhsa, result);
+
+            // Initialize step navigator
+            initializeStepNavigator();
+
+            // Render initial step
+            renderStep();
         }
 
         function averageAttentions(attentions) {
@@ -1434,6 +1851,716 @@
             ctx.rotate(-Math.PI / 2);
             ctx.fillText('ATTENTION', 0, 0);
             ctx.restore();
+        }
+
+        function drawStepSoftmaxCanvas(canvas, tokens, focusIdx, head0) {
+            const ctx = canvas.getContext('2d');
+            const scores = head0.scores[focusIdx];
+            const weights = head0.attentionWeights[focusIdx];
+
+            const barWidth = Math.min(80, 500 / tokens.length);
+            const gap = 10;
+            const startX = (canvas.width - tokens.length * (barWidth + gap)) / 2;
+            const baseY = 250;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw bars
+            tokens.forEach((token, i) => {
+                const x = startX + i * (barWidth + gap);
+                
+                // Scaled score (before softmax)
+                const scoreHeight = Math.min(Math.abs(scores[i]) * 40, 80);
+                ctx.fillStyle = 'rgba(255, 107, 107, 0.6)';
+                ctx.fillRect(x, baseY - scoreHeight - 80, barWidth / 2 - 2, scoreHeight);
+
+                // Softmax weight
+                const weightHeight = weights[i] * 120;
+                ctx.fillStyle = 'rgba(102, 126, 234, 0.9)';
+                ctx.fillRect(x + barWidth / 2, baseY - weightHeight - 80, barWidth / 2 - 2, weightHeight);
+
+                // Labels
+                ctx.fillStyle = '#495057';
+                ctx.font = '11px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(token, x + barWidth / 2, baseY - 60);
+                
+                ctx.font = '9px Arial';
+                ctx.fillText(scores[i].toFixed(2), x + barWidth / 4, baseY - scoreHeight - 85);
+                ctx.fillText((weights[i] * 100).toFixed(0) + '%', x + 3 * barWidth / 4, baseY - weightHeight - 85);
+            });
+
+            // Legend
+            ctx.fillStyle = 'rgba(255, 107, 107, 0.6)';
+            ctx.fillRect(20, 20, 15, 15);
+            ctx.fillStyle = '#495057';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Scaled Scores', 40, 32);
+
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.9)';
+            ctx.fillRect(20, 40, 15, 15);
+            ctx.fillText('Attention Weights (%)', 40, 52);
+        }
+
+        function prepareSequenceData(tokens, embeddings, mhsa, result) {
+            sequenceData = {
+                tokens,
+                embeddings,
+                mhsa,
+                result,
+                focusToken: Math.floor(tokens.length / 2)
+            };
+        }
+
+        function initializeStepNavigator() {
+            const steps = [
+                'Input Tokens',
+                'Token Embeddings',
+                'Linear Projections',
+                'Query-Key Dot Product',
+                'Scaling',
+                'Softmax',
+                'Attention × Values',
+                'Concatenate Heads',
+                'Final Output'
+            ];
+
+            const navGrid = document.getElementById('stepNavGrid');
+            navGrid.innerHTML = steps.map((name, idx) => `
+                <div class="nav-step ${idx === 0 ? 'active' : ''}" onclick="goToStep(${idx})">
+                    <div class="nav-step-num">Step ${idx + 1}</div>
+                    <div class="nav-step-name">${name}</div>
+                </div>
+            `).join('');
+        }
+
+        function generateStepContent(step, data) {
+            const { tokens, embeddings, mhsa, result, focusToken } = data;
+            const head0 = result.headOutputs[0];
+
+            switch(step) {
+                case 0: return generateStep0_InputTokens(tokens);
+                case 1: return generateStep1_Embeddings(tokens, embeddings, mhsa);
+                case 2: return generateStep2_Projections(tokens, embeddings, mhsa, head0);
+                case 3: return generateStep3_DotProduct(tokens, head0, focusToken);
+                case 4: return generateStep4_Scaling(tokens, head0, mhsa, focusToken);
+                case 5: return generateStep5_Softmax(tokens, head0, focusToken);
+                case 6: return generateStep6_AttentionValues(tokens, head0, focusToken);
+                case 7: return generateStep7_Concatenate(tokens, result, mhsa);
+                case 8: return generateStep8_FinalOutput(tokens, embeddings, result);
+                default: return '';
+            }
+        }
+
+        function generateStep0_InputTokens(tokens) {
+            return `
+                <div class="step-content">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Input Tokens
+                    </div>
+                    <div class="step-description">
+                        We start with a sequence of tokens (words or subwords) from our input text.
+                        Each token will be processed independently but will interact through attention.
+                    </div>
+
+                    <div class="computation-visual">
+                        <h4 style="margin-bottom: 15px;">Input Sequence</h4>
+                        <div class="data-flow">
+                            ${tokens.map((token, idx) => `
+                                <div class="data-box active">
+                                    <div class="data-label">Token ${idx + 1}</div>
+                                    <div class="data-value">"${token}"</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Point:</strong> We have ${tokens.length} tokens in our sequence. 
+                        Each token starts as a discrete symbol that needs to be converted to a continuous vector representation.
+                    </div>
+
+                    <div class="formula-box">
+                        Sequence Length: n = ${tokens.length}<br>
+                        Tokens: [${tokens.map(t => `"${t}"`).join(', ')}]
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateStep1_Embeddings(tokens, embeddings, mhsa) {
+            return `
+                <div class="step-content">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Token Embeddings
+                    </div>
+                    <div class="step-description">
+                        Each token is converted into a dense vector of dimension d<sub>model</sub> = ${mhsa.embedDim}.
+                        This embedding captures semantic information about the token.
+                    </div>
+
+                    <div class="computation-visual">
+                        <h4 style="margin-bottom: 15px;">Embedding Transformation</h4>
+                        ${tokens.map((token, idx) => `
+                            <div class="token-embedding-viz">
+                                <div class="token-box">${token}</div>
+                                <div class="projection-arrow">→</div>
+                                <div class="embedding-viz">
+                                    ${embeddings[idx].slice(0, 20).map(val => 
+                                        `<div class="embedding-bar" style="height: ${Math.abs(val) * 80 + 20}px;"></div>`
+                                    ).join('')}
+                                </div>
+                                <small style="margin-left: 10px;">[${mhsa.embedDim}-dimensional vector]</small>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="visual-equation">
+                        <div class="eq-component">Token</div>
+                        <div class="eq-operator">→</div>
+                        <div class="eq-component">Embedding Matrix</div>
+                        <div class="eq-operator">→</div>
+                        <div class="eq-component">Vector ∈ ℝ<sup>${mhsa.embedDim}</sup></div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Point:</strong> Embeddings are learned representations where semantically similar words 
+                        have similar vectors. This ${mhsa.embedDim}-dimensional space captures linguistic properties.
+                    </div>
+
+                    <div class="matrix-viz-container">
+                        ${tokens.slice(0, 3).map((token, idx) => `
+                            <div class="matrix-card highlight">
+                                <div class="matrix-label">"${token}" embedding (first 8 dims)</div>
+                                <div class="mini-matrix">
+                                    [${embeddings[idx].slice(0, 8).map(v => v.toFixed(3)).join(', ')}...]
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="formula-box">
+                        X ∈ ℝ<sup>${tokens.length} × ${mhsa.embedDim}</sup><br>
+                        where each row is a token's embedding vector
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateStep2_Projections(tokens, embeddings, mhsa, head0) {
+            return `
+                <div class="step-content">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        Linear Projections to Q, K, V
+                    </div>
+                    <div class="step-description">
+                        Each embedding is transformed into three different representations using learned weight matrices:
+                        <strong>Query (Q)</strong>, <strong>Key (K)</strong>, and <strong>Value (V)</strong>.
+                    </div>
+
+                    <div class="computation-visual">
+                        <h4 style="margin-bottom: 15px;">Projection Process (Head 1)</h4>
+                        <div class="visual-equation">
+                            <div class="eq-component" style="border-color: #FF6B6B;">
+                                Q = X · W<sup>Q</sup><br>
+                                <small>[${tokens.length} × ${mhsa.headDim}]</small>
+                            </div>
+                            <div class="eq-component" style="border-color: #4ECDC4;">
+                                K = X · W<sup>K</sup><br>
+                                <small>[${tokens.length} × ${mhsa.headDim}]</small>
+                            </div>
+                            <div class="eq-component" style="border-color: #95E1D3;">
+                                V = X · W<sup>V</sup><br>
+                                <small>[${tokens.length} × ${mhsa.headDim}]</small>
+                            </div>
+                        </div>
+
+                        <div style="margin: 30px 0;">
+                            <h4>Example: Token "${tokens[0]}"</h4>
+                            <div class="data-flow">
+                                <div class="data-box active">
+                                    <div class="data-label">Embedding</div>
+                                    <div class="data-value">[${mhsa.embedDim}d]</div>
+                                </div>
+                                <div class="operation-symbol">×</div>
+                                <div class="data-box" style="border-color: #FF6B6B;">
+                                    <div class="data-label">W<sup>Q</sup></div>
+                                    <div class="data-value">[${mhsa.embedDim}×${mhsa.headDim}]</div>
+                                </div>
+                                <div class="operation-symbol">=</div>
+                                <div class="data-box active" style="background: linear-gradient(135deg, #FF6B6B, #EE5A6F); color: white;">
+                                    <div class="data-label">Query</div>
+                                    <div class="data-value">[${mhsa.headDim}d]</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qkv-grid">
+                        <div class="qkv-card qkv-query">
+                            <h3>🔍 Queries</h3>
+                            <div class="mini-matrix">
+                                ${tokens.slice(0, 3).map((t, i) => 
+                                    `${t}: [${head0.Q[i].slice(0, 4).map(v => v.toFixed(2)).join(', ')}...]`
+                                ).join('<br>')}
+                            </div>
+                        </div>
+                        <div class="qkv-card qkv-key">
+                            <h3>🔑 Keys</h3>
+                            <div class="mini-matrix">
+                                ${tokens.slice(0, 3).map((t, i) => 
+                                    `${t}: [${head0.K[i].slice(0, 4).map(v => v.toFixed(2)).join(', ')}...]`
+                                ).join('<br>')}
+                            </div>
+                        </div>
+                        <div class="qkv-card qkv-value">
+                            <h3>💎 Values</h3>
+                            <div class="mini-matrix">
+                                ${tokens.slice(0, 3).map((t, i) => 
+                                    `${t}: [${head0.V[i].slice(0, 4).map(v => v.toFixed(2)).join(', ')}...]`
+                                ).join('<br>')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Point:</strong> The weight matrices W<sup>Q</sup>, W<sup>K</sup>, W<sup>V</sup> 
+                        are learned during training. They transform the embedding from d<sub>model</sub>=${mhsa.embedDim} 
+                        to d<sub>k</sub>=${mhsa.headDim} dimensions per head.
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateStep3_DotProduct(tokens, head0, focusToken) {
+            const focusTokenName = tokens[focusToken];
+            return `
+                <div class="step-content">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        Compute Query-Key Dot Product (Q · K<sup>T</sup>)
+                    </div>
+                    <div class="step-description">
+                        For each query vector, we compute its dot product with all key vectors.
+                        This measures the similarity between queries and keys.
+                        <br><strong>Focus: Token "${focusTokenName}"</strong>
+                    </div>
+
+                    <div class="computation-visual">
+                        <h4>Attention Scores for "${focusTokenName}"</h4>
+                        <div class="attention-computation-viz">
+                            <div class="token-row">
+                                <strong style="min-width: 100px;">Query:</strong>
+                                <div class="token-cell highlight">
+                                    ${focusTokenName}<br>
+                                    Q[${head0.Q[focusToken].slice(0, 4).map(v => v.toFixed(2)).join(', ')}...]
+                                </div>
+                            </div>
+
+                            <div style="text-align: center; margin: 20px 0; font-size: 24px; color: #667eea;">
+                                ⊗ (dot product with each key)
+                            </div>
+
+                            ${tokens.map((token, idx) => {
+                                const dotProduct = head0.Q[focusToken].reduce((sum, q, i) => 
+                                    sum + q * head0.K[idx][i], 0
+                                );
+                                const isMax = idx === focusToken || 
+                                    Math.abs(dotProduct) === Math.max(...tokens.map((_, i) => 
+                                        Math.abs(head0.Q[focusToken].reduce((s, q, j) => s + q * head0.K[i][j], 0))
+                                    ));
+                                return `
+                                    <div class="token-row">
+                                        <strong style="min-width: 100px;">Key ${idx + 1}:</strong>
+                                        <div class="token-cell ${isMax ? 'highlight' : ''}">
+                                            ${token}
+                                        </div>
+                                        <div class="operation-symbol" style="font-size: 20px;">→</div>
+                                        <div class="token-cell ${isMax ? 'highlight' : ''}" style="min-width: 100px;">
+                                            Score: ${dotProduct.toFixed(3)}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="formula-box">
+                        score<sub>ij</sub> = Q<sub>i</sub> · K<sub>j</sub><sup>T</sup> = Σ<sub>k</sub> Q<sub>i,k</sub> × K<sub>j,k</sub>
+                        <br><br>
+                        For token "${focusTokenName}" (i=${focusToken}), we compute its similarity with all ${tokens.length} keys.
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Point:</strong> High dot product means the query and key are aligned in the learned space.
+                        This indicates relevance: "${focusTokenName}" should pay attention to tokens with high scores.
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateStep4_Scaling(tokens, head0, mhsa, focusToken) {
+            const focusTokenName = tokens[focusToken];
+            const scale = Math.sqrt(mhsa.headDim);
+            return `
+                <div class="step-content">
+                    <div class="step-title">
+                        <span class="step-number">5</span>
+                        Scale by √d<sub>k</sub>
+                    </div>
+                    <div class="step-description">
+                        Divide attention scores by √d<sub>k</sub> = √${mhsa.headDim} = ${scale.toFixed(2)}.
+                        This prevents the dot products from becoming too large, which would make gradients very small.
+                    </div>
+
+                    <div class="computation-visual">
+                        <h4>Scaling Transformation</h4>
+                        <div class="visual-equation">
+                            <div class="eq-component">Raw Scores</div>
+                            <div class="eq-operator">÷</div>
+                            <div class="eq-component">√${mhsa.headDim} = ${scale.toFixed(2)}</div>
+                            <div class="eq-operator">=</div>
+                            <div class="eq-component">Scaled Scores</div>
+                        </div>
+
+                        <div style="margin: 30px 0;">
+                            <h4>Before and After Scaling for "${focusTokenName}"</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div>
+                                    <strong>Before Scaling:</strong>
+                                    ${tokens.map((token, idx) => {
+                                        const rawScore = head0.Q[focusToken].reduce((sum, q, i) => 
+                                            sum + q * head0.K[idx][i], 0
+                                        );
+                                        return `
+                                            <div class="token-row">
+                                                <div class="token-cell">
+                                                    ${token}: ${rawScore.toFixed(3)}
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                                <div>
+                                    <strong>After Scaling:</strong>
+                                    ${tokens.map((token, idx) => `
+                                        <div class="token-row">
+                                            <div class="token-cell highlight">
+                                                ${token}: ${head0.scores[focusToken][idx].toFixed(3)}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="formula-box">
+                        scaled_score<sub>ij</sub> = score<sub>ij</sub> / √d<sub>k</sub>
+                        <br><br>
+                        This scaling factor keeps the variance of scores stable as d<sub>k</sub> increases.
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Point:</strong> Without scaling, large d<sub>k</sub> would lead to very large dot products,
+                        pushing softmax into regions with extremely small gradients (vanishing gradient problem).
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateStep5_Softmax(tokens, head0, focusToken) {
+            const focusTokenName = tokens[focusToken];
+            return `
+                <div class="step-content">
+                    <div class="step-title">
+                        <span class="step-number">6</span>
+                        Apply Softmax Normalization
+                    </div>
+                    <div class="step-description">
+                        Convert scaled scores to probability distribution using softmax.
+                        Now the attention weights sum to 1 and represent "how much to attend to each token."
+                    </div>
+
+                    <div class="computation-visual">
+                        <h4>Softmax Transformation for "${focusTokenName}"</h4>
+                        <canvas id="stepSoftmaxCanvas" width="600" height="300" style="display: block; margin: 20px auto;"></canvas>
+                    </div>
+
+                    <div class="visual-equation">
+                        <div class="eq-component">Scaled Scores</div>
+                        <div class="eq-operator">→</div>
+                        <div class="eq-component">exp(x)</div>
+                        <div class="eq-operator">→</div>
+                        <div class="eq-component">Normalize</div>
+                        <div class="eq-operator">=</div>
+                        <div class="eq-component">Probabilities</div>
+                    </div>
+
+                    <div style="margin: 30px 0;">
+                        <h4>Attention Weights Distribution</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+                            ${tokens.map((token, idx) => {
+                                const weight = head0.attentionWeights[focusToken][idx];
+                                return `
+                                    <div class="data-box ${weight > 0.15 ? 'active' : ''}">
+                                        <div class="data-label">${token}</div>
+                                        <div class="data-value">${(weight * 100).toFixed(1)}%</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <div style="text-align: center; margin-top: 15px; font-weight: 600;">
+                            Sum = ${head0.attentionWeights[focusToken].reduce((a, b) => a + b, 0).toFixed(3)} ≈ 1.0 ✓
+                        </div>
+                    </div>
+
+                    <div class="formula-box">
+                        attention<sub>ij</sub> = exp(scaled_score<sub>ij</sub>) / Σ<sub>k</sub> exp(scaled_score<sub>ik</sub>)
+                        <br><br>
+                        where Σ<sub>j</sub> attention<sub>ij</sub> = 1
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Point:</strong> Softmax creates a probability distribution. Tokens with higher scores
+                        get higher attention weights, but all tokens contribute at least a little bit.
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateStep6_AttentionValues(tokens, head0, focusToken) {
+            const focusTokenName = tokens[focusToken];
+            return `
+                <div class="step-content">
+                    <div class="step-title">
+                        <span class="step-number">7</span>
+                        Multiply Attention × Values
+                    </div>
+                    <div class="step-description">
+                        Use attention weights to compute a weighted sum of value vectors.
+                        This creates a context-aware representation for "${focusTokenName}".
+                    </div>
+
+                    <div class="computation-visual">
+                        <h4>Weighted Aggregation</h4>
+                        <div class="formula-box">
+                            output[${focusTokenName}] = ${tokens.map((t, i) => 
+                                `${head0.attentionWeights[focusToken][i].toFixed(3)} × V[${t}]`
+                            ).join(' +<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ')}
+                        </div>
+
+                        <div style="margin: 30px 0;">
+                            <h4>Visual Breakdown</h4>
+                            ${tokens.map((token, idx) => {
+                                const weight = head0.attentionWeights[focusToken][idx];
+                                return `
+                                    <div style="display: flex; align-items: center; gap: 15px; margin: 15px 0; 
+                                                padding: 15px; background: ${weight > 0.15 ? '#e7f3ff' : '#f8f9fa'}; 
+                                                border-radius: 8px; border-left: 4px solid ${weight > 0.15 ? '#667eea' : '#dee2e6'};">
+                                        <div style="min-width: 80px; font-weight: 700;">${token}</div>
+                                        <div style="min-width: 80px;">
+                                            Weight: <strong>${(weight * 100).toFixed(1)}%</strong>
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <div style="background: #667eea; height: 25px; width: ${weight * 100}%; 
+                                                        border-radius: 4px; transition: width 0.3s;"></div>
+                                        </div>
+                                        <div style="min-width: 200px; font-family: monospace; font-size: 11px;">
+                                            V: [${head0.V[idx].slice(0, 4).map(v => v.toFixed(2)).join(', ')}...]
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="result-box">
+                        <h4 style="margin-bottom: 10px;">Output for "${focusTokenName}"</h4>
+                        <div style="font-family: monospace;">
+                            [${head0.output[focusToken].slice(0, 8).map(v => v.toFixed(3)).join(', ')}...]
+                        </div>
+                        <div style="margin-top: 10px; font-size: 14px;">
+                            This is a ${head0.output[focusToken].length}-dimensional contextualized representation
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Point:</strong> Tokens with higher attention weights contribute more to the output.
+                        This allows "${focusTokenName}" to incorporate relevant information from the entire sequence.
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateStep7_Concatenate(tokens, result, mhsa) {
+            return `
+                <div class="step-content">
+                    <div class="step-title">
+                        <span class="step-number">8</span>
+                        Concatenate Multiple Heads
+                    </div>
+                    <div class="step-description">
+                        Each of the ${mhsa.numHeads} heads has produced its own output.
+                        We concatenate these outputs along the feature dimension.
+                    </div>
+
+                    <div class="computation-visual">
+                        <h4>Multi-Head Concatenation</h4>
+                        <div class="data-flow">
+                            ${Array.from({length: mhsa.numHeads}, (_, h) => `
+                                <div class="data-box active">
+                                    <div class="data-label">Head ${h + 1}</div>
+                                    <div class="data-value">[${tokens.length}×${mhsa.headDim}]</div>
+                                </div>
+                            `).join('<div class="operation-symbol" style="font-size: 24px;">⊕</div>')}
+                        </div>
+
+                        <div style="text-align: center; margin: 30px 0;">
+                            <div class="operation-symbol">↓</div>
+                            <div class="data-box active" style="display: inline-block; margin-top: 20px; font-size: 18px;">
+                                Concatenated Output<br>
+                                <div class="data-value">[${tokens.length} × ${mhsa.numHeads * mhsa.headDim}]</div>
+                            </div>
+                        </div>
+
+                        <div style="margin: 30px 0;">
+                            <h4>Why Multiple Heads?</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #FF6B6B;">
+                                    <strong>Head 1 might focus on:</strong><br>
+                                    Syntactic relationships<br>
+                                    (subject-verb agreement)
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #4ECDC4;">
+                                    <strong>Head 2 might focus on:</strong><br>
+                                    Semantic relationships<br>
+                                    (word meanings)
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #95E1D3;">
+                                    <strong>Head 3 might focus on:</strong><br>
+                                    Long-range dependencies<br>
+                                    (distant words)
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #F7DC6F;">
+                                    <strong>Head 4 might focus on:</strong><br>
+                                    Local context<br>
+                                    (adjacent words)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="formula-box">
+                        MultiHead = Concat(head<sub>1</sub>, head<sub>2</sub>, ..., head<sub>${mhsa.numHeads}</sub>)
+                        <br><br>
+                        Each head<sub>i</sub> ∈ ℝ<sup>${tokens.length} × ${mhsa.headDim}</sup><br>
+                        MultiHead ∈ ℝ<sup>${tokens.length} × ${mhsa.numHeads * mhsa.headDim}</sup>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Point:</strong> Multiple heads allow the model to attend to different aspects simultaneously.
+                        Each head can specialize in capturing different types of relationships in the data.
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateStep8_FinalOutput(tokens, embeddings, result) {
+            return `
+                <div class="step-content">
+                    <div class="step-title">
+                        <span class="step-number">9</span>
+                        Final Output Projection
+                    </div>
+                    <div class="step-description">
+                        Apply a final linear transformation W<sup>O</sup> to project the concatenated heads
+                        back to the original embedding dimension.
+                    </div>
+
+                    <div class="computation-visual">
+                        <h4>Output Projection</h4>
+                        <div class="visual-equation">
+                            <div class="eq-component">
+                                Concatenated<br>
+                                [${tokens.length} × ${result.headOutputs.length * result.headOutputs[0].output[0].length}]
+                            </div>
+                            <div class="eq-operator">×</div>
+                            <div class="eq-component">
+                                W<sup>O</sup><br>
+                                [${result.headOutputs.length * result.headOutputs[0].output[0].length} × ${embeddings[0].length}]
+                            </div>
+                            <div class="eq-operator">=</div>
+                            <div class="eq-component" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);">
+                                Final Output<br>
+                                [${tokens.length} × ${embeddings[0].length}]
+                            </div>
+                        </div>
+
+                        <div style="margin: 30px 0;">
+                            <h4>Transformation Comparison</h4>
+                            ${tokens.slice(0, 3).map((token, idx) => `
+                                <div style="margin: 20px 0; padding: 20px; background: white; border-radius: 8px; border: 2px solid #667eea;">
+                                    <div style="font-weight: 700; font-size: 18px; margin-bottom: 15px; color: #667eea;">
+                                        Token: "${token}"
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                        <div>
+                                            <div style="font-weight: 600; margin-bottom: 8px;">Input Embedding:</div>
+                                            <div style="font-family: monospace; font-size: 11px; background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                                                [${embeddings[idx].slice(0, 6).map(v => v.toFixed(3)).join(', ')}...]
+                                            </div>
+                                            <div style="margin-top: 8px; font-size: 12px; color: #6c757d;">
+                                                Static representation
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 600; margin-bottom: 8px;">After Attention:</div>
+                                            <div style="font-family: monospace; font-size: 11px; background: linear-gradient(135deg, #e7f3ff, #f0e7ff); padding: 10px; border-radius: 4px;">
+                                                [${result.output[idx].slice(0, 6).map(v => v.toFixed(3)).join(', ')}...]
+                                            </div>
+                                            <div style="margin-top: 8px; font-size: 12px; color: #667eea; font-weight: 600;">
+                                                Contextualized representation ✨
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="result-box">
+                        <h4 style="margin-bottom: 10px;">🎉 Complete! Multi-Head Self-Attention Output</h4>
+                        <div style="font-size: 16px; line-height: 1.8;">
+                            ✓ Each token now has a context-aware representation<br>
+                            ✓ Tokens have incorporated information from the entire sequence<br>
+                            ✓ Multiple attention heads captured different relationship patterns<br>
+                            ✓ Output shape matches input shape: [${tokens.length} × ${embeddings[0].length}]
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Point:</strong> The final output maintains the same shape as the input,
+                        but now each token's representation is enriched with contextual information from all other tokens.
+                        This contextualized output can be fed into subsequent layers of the transformer.
+                    </div>
+
+                    <div class="formula-box">
+                        Output = MultiHead · W<sup>O</sup><br>
+                        <br>
+                        This completes one full multi-head self-attention layer!<br>
+                        In a real transformer, this would be followed by:<br>
+                        • Residual connection: output + input<br>
+                        • Layer normalization<br>
+                        • Feed-forward network<br>
+                        • More transformer layers...
+                    </div>
+                </div>
+            `;
         }
 
         // Run on page load
