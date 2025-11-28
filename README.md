@@ -6,12 +6,15 @@ An interactive visualization tool for understanding how Multi-Head Self-Attentio
 
 - **Step-by-step visualization** of the complete 9-step MHSA pipeline
 - **Real model weights** - Pre-extracted DistilBERT attention weights from trained models
+- **Model selector** - Choose from multiple pre-trained models (DistilBERT 1/2/4 heads, Demo)
+- **Automatic pattern detection** - Identifies attention patterns like [CLS], self-attention, adjacent tokens
 - **Interactive attention heatmaps** showing where each token attends
 - **Q/K/V projection visualization** to understand learned representations
 - **Mathematical breakdown** with dimension tracking at each step
 - **Architecture diagrams** showing encoder/decoder structure
 - **Multiple attention heads** - Compare how different heads learn different patterns
 - **Temperature control** - Adjust softmax sharpness to see how it affects attention
+- **Validation tools** - Python script to verify outputs against HuggingFace models
 
 ## 📁 Project Structure
 
@@ -38,6 +41,7 @@ mhsa/
 ├── scripts/
 │   ├── extract_model_weights.py   # Extract weights from HuggingFace models
 │   ├── create_compact_weights.py  # Create compact weight files for web
+│   ├── validate_attention.py      # Validate outputs against HuggingFace
 │   └── requirements.txt           # Python dependencies
 ├── LICENSE
 └── README.md
@@ -65,17 +69,23 @@ For real-time DistilBERT embeddings via transformers.js, the model will be downl
 
 ## 🧠 Model Sources
 
-The visualizer supports multiple model configurations:
+The visualizer supports multiple model configurations, selectable via the **Model Selector** in the UI:
 
+### Embedding Modes (Custom Dimensions)
 | Source | Description | Speed |
 |--------|-------------|-------|
 | **Deterministic** | Hash-based embeddings with random weights | Instant |
 | **Random** | Xavier-initialized random embeddings & weights | Instant |
-| **DistilBERT (4 heads)** | Real DistilBERT weights + transformers.js tokenization | ~5s first load |
-| **DistilBERT (2 heads)** | Subset of DistilBERT heads for clearer visualization | ~5s first load |
-| **Demo (Tiny)** | Small 64-dim model for fast experiments | Instant |
 
-> **Note:** Real model weights are pre-extracted JSON files (~2-5MB). The transformers.js model for tokenization is cached in the browser after first load.
+### Pre-trained Models (Fixed Dimensions)
+| Model | Description | Dimensions | Speed |
+|-------|-------------|------------|-------|
+| **DistilBERT (4 heads)** | First 4 attention heads from layer 0 | 768-dim, 64 head-dim | ~5s first load |
+| **DistilBERT (2 heads)** | First 2 attention heads for clearer visualization | 768-dim, 64 head-dim | ~5s first load |
+| **DistilBERT (1 head)** | Single head for focused analysis | 768-dim, 64 head-dim | ~5s first load |
+| **Demo (Tiny)** | Small demo model for fast experiments | 64-dim, 16 head-dim | Instant |
+
+> **Note:** Real model weights are pre-extracted JSON files (~2-5MB). The transformers.js model for tokenization is cached in the browser after first load. When using pre-trained models, the embedding dimension and number of heads are locked to the model's configuration.
 
 ## 🔧 Module Overview
 
@@ -242,6 +252,73 @@ When using DistilBERT weights, you'll observe learned patterns:
 - **Adjacent attention** - Local context (nearby words)
 - **Long-range attention** - Distant but related tokens
 - **Special token patterns** - [CLS] often aggregates globally
+
+## 🔬 Layer 0 Attention Head Behavior
+
+Research (particularly Clark et al., 2019 "What Does BERT Look At?") has identified common patterns in early-layer attention heads. The visualizer automatically detects and labels these patterns:
+
+| Pattern | Description | Visual Signature |
+|---------|-------------|------------------|
+| **📍 [CLS] Attention** | Heads attending heavily to the [CLS] token | Bright vertical column on first token |
+| **📍 [SEP] Attention** | Heads attending heavily to the [SEP] token | Bright vertical column on last token |
+| **🎯 Self-Attention** | Tokens attending to themselves | Bright main diagonal |
+| **← Previous Token** | Attending to the immediately preceding word | Diagonal stripe below main diagonal |
+| **→ Next Token** | Attending to the immediately following word | Diagonal stripe above main diagonal |
+| **🌐 Broad/Uniform** | Even attention distributed across all tokens | Uniform color distribution |
+
+> **Note:** Layer 0 captures **surface-level patterns** (positional, syntactic). Deeper semantic understanding emerges in middle/later layers (layers 3-6 in BERT/DistilBERT).
+
+## ✅ Validation
+
+You can validate the visualizer's attention outputs against the actual HuggingFace DistilBERT model using the provided Python script:
+
+### Running the Validation Script
+
+```bash
+cd scripts
+pip install transformers torch numpy
+python validate_attention.py "The cat sat on the mat"
+```
+
+### What the Script Does
+
+1. **Loads DistilBERT** from HuggingFace with `output_attentions=True`
+2. **Tokenizes** the input text (including [CLS] and [SEP] tokens)
+3. **Extracts layer 0 attention weights** for all 12 heads
+4. **Analyzes patterns** - Detects [CLS], [SEP], self-attention, adjacent token patterns
+5. **Prints attention matrices** for direct comparison with the visualizer
+6. **Saves results** to `validation_output.json` for further analysis
+
+### Example Output
+
+```
+Input text: 'The cat sat on the mat'
+Tokens: ['[CLS]', 'the', 'cat', 'sat', 'on', 'the', 'mat', '[SEP]']
+
+ATTENTION PATTERN ANALYSIS
+==========================
+head_0:
+  ✓ Attends to [CLS] (avg: 0.45)
+  Stats: CLS=0.45, SEP=0.12, Self=0.18, Prev=0.08, Next=0.05
+
+head_1:
+  ✓ Self-attention (avg: 0.38)
+  ✓ Previous token (avg: 0.22)
+  ...
+```
+
+### Comparing with the Visualizer
+
+1. Run the validation script with your input text
+2. Open the visualizer in your browser
+3. Enter the **exact same input text**
+4. Select a DistilBERT model with matching head count
+5. Go to the "Individual Heads" tab
+6. Compare the attention heatmaps and detected patterns
+
+The attention weights should match closely. Small differences may occur due to:
+- Floating-point precision differences between Python/JavaScript
+- Different handling of subword tokenization edge cases
 
 ## 🌐 Browser Compatibility
 

@@ -74,9 +74,22 @@ function setupModelSelector() {
     // Check if transformers.js is available for DistilBERT
     const transformersAvailable = isTransformersAvailable();
     
+    // Build model options dynamically from config
+    const modelKeys = Object.keys(Config.models);
+    const realModelOptions = modelKeys.map(key => {
+        const model = Config.models[key];
+        return `
+            <div class="model-option real-model" data-source="${key}" onclick="setModelSource('${key}')" ${!transformersAvailable && model.isRealModel ? 'style="opacity: 0.5"' : ''}>
+                <strong>${model.isRealModel ? '🤖 ' : '🔧 '}${model.name}</strong>
+                <small>${model.description || `${model.numHeads} head${model.numHeads > 1 ? 's' : ''}, ${model.embedDim}d`}</small>
+                ${!transformersAvailable && model.isRealModel ? '<small style="color: #dc3545;">Requires WebAssembly</small>' : ''}
+            </div>
+        `;
+    }).join('');
+    
     const modelSelectorHTML = `
         <div class="model-selector">
-            <label>Model Source:</label>
+            <label>Embedding Mode:</label>
             <div class="model-options">
                 <div class="model-option" data-source="deterministic" onclick="setEmbeddingSource('deterministic')">
                     <strong>Deterministic</strong>
@@ -86,11 +99,10 @@ function setupModelSelector() {
                     <strong>Random</strong>
                     <small>Xavier init (instant)</small>
                 </div>
-                <div class="model-option real-model" data-source="distilbert-4head" onclick="setModelSource('distilbert-4head')" ${!transformersAvailable ? 'style="opacity: 0.5"' : ''}>
-                    <strong>🤖 DistilBERT</strong>
-                    <small>Real model (4 heads)</small>
-                    ${!transformersAvailable ? '<small style="color: #dc3545;">Requires WebAssembly</small>' : ''}
-                </div>
+            </div>
+            <label style="margin-top: 15px;">Pre-trained Models:</label>
+            <div class="model-options">
+                ${realModelOptions}
             </div>
             <div id="modelLoadingStatus" class="model-loading-status" style="display: none;">
                 <div class="loading-spinner"></div>
@@ -335,11 +347,49 @@ export async function runAttention() {
     const headsContainer = document.getElementById('headsContainer');
     if (headsContainer) {
         headsContainer.innerHTML = '';
+        
+        // Add pattern guide for real models
+        if (isRealModel) {
+            const guideDiv = document.createElement('div');
+            guideDiv.className = 'attention-pattern-guide';
+            guideDiv.innerHTML = `
+                <h4>🔍 Expected Layer 0 Attention Patterns</h4>
+                <p>Research shows that early-layer heads in BERT/DistilBERT typically exhibit these patterns:</p>
+                <div class="pattern-grid">
+                    <div class="pattern-item">
+                        <strong>📍 [CLS]/[SEP] Attention</strong>
+                        <small>Some heads attend heavily to special tokens (bright column on first/last token)</small>
+                    </div>
+                    <div class="pattern-item">
+                        <strong>↔️ Adjacent Token</strong>
+                        <small>Attending to previous or next word (diagonal stripe pattern)</small>
+                    </div>
+                    <div class="pattern-item">
+                        <strong>🎯 Self-Attention</strong>
+                        <small>Tokens attending to themselves (bright diagonal)</small>
+                    </div>
+                    <div class="pattern-item">
+                        <strong>🌐 Broad/Uniform</strong>
+                        <small>Even attention across all tokens (uniform colors)</small>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; font-size: 12px; color: #6c757d;">
+                    <strong>Validation:</strong> Run <code>python scripts/validate_attention.py "your text"</code> to compare against HuggingFace output.
+                </p>
+            `;
+            headsContainer.appendChild(guideDiv);
+        }
+        
         for (let h = 0; h < numHeads; h++) {
             const headDiv = document.createElement('div');
             headDiv.className = 'head-container';
+            
+            // Analyze patterns for this head
+            const patternAnalysis = isRealModel ? analyzeAttentionPattern(result.headAttentions[h], tokens) : '';
+            
             headDiv.innerHTML = `
                 <div class="head-title">Head ${h + 1}${isRealModel ? ' <small>(real weights)</small>' : ''}</div>
+                ${patternAnalysis ? `<div class="head-pattern-badge">${patternAnalysis}</div>` : ''}
                 <canvas id="headCanvas${h}"></canvas>
             `;
             headsContainer.appendChild(headDiv);
@@ -382,6 +432,77 @@ export async function runAttention() {
     renderHeadsParallelView(mhsa.numHeads, mhsa.headDim);
     renderArchStats(mhsa, tokens.length);
     updateFlowDimensions(tokens.length, mhsa.embedDim, mhsa.numHeads, mhsa.headDim);
+}
+
+/**
+ * Analyze attention pattern to identify common behaviors
+ * @param {number[][]} attentionWeights - Attention matrix [seqLen x seqLen]
+ * @param {string[]} tokens - Token strings
+ * @returns {string} Pattern description
+ */
+function analyzeAttentionPattern(attentionWeights, tokens) {
+    const seqLen = attentionWeights.length;
+    const patterns = [];
+    
+    // Check for [CLS] attention (first token gets high attention)
+    const clsAttention = attentionWeights.reduce((sum, row) => sum + row[0], 0) / seqLen;
+    if (clsAttention > 0.25) {
+        patterns.push(`📍 [CLS] (${(clsAttention * 100).toFixed(0)}%)`);
+    }
+    
+    // Check for [SEP] attention (last token gets high attention)
+    const sepAttention = attentionWeights.reduce((sum, row) => sum + row[seqLen - 1], 0) / seqLen;
+    if (sepAttention > 0.25) {
+        patterns.push(`📍 [SEP] (${(sepAttention * 100).toFixed(0)}%)`);
+    }
+    
+    // Check for self-attention (diagonal is high)
+    let selfSum = 0;
+    for (let i = 0; i < seqLen; i++) {
+        selfSum += attentionWeights[i][i];
+    }
+    const selfAttention = selfSum / seqLen;
+    if (selfAttention > 0.25) {
+        patterns.push(`🎯 Self (${(selfAttention * 100).toFixed(0)}%)`);
+    }
+    
+    // Check for previous token attention
+    let prevSum = 0;
+    for (let i = 1; i < seqLen; i++) {
+        prevSum += attentionWeights[i][i - 1];
+    }
+    const prevAttention = prevSum / (seqLen - 1);
+    if (prevAttention > 0.15) {
+        patterns.push(`← Prev (${(prevAttention * 100).toFixed(0)}%)`);
+    }
+    
+    // Check for next token attention
+    let nextSum = 0;
+    for (let i = 0; i < seqLen - 1; i++) {
+        nextSum += attentionWeights[i][i + 1];
+    }
+    const nextAttention = nextSum / (seqLen - 1);
+    if (nextAttention > 0.15) {
+        patterns.push(`→ Next (${(nextAttention * 100).toFixed(0)}%)`);
+    }
+    
+    // Check for broad/uniform attention (high entropy)
+    let entropy = 0;
+    for (let i = 0; i < seqLen; i++) {
+        for (let j = 0; j < seqLen; j++) {
+            const p = attentionWeights[i][j];
+            if (p > 0.001) {
+                entropy -= p * Math.log(p);
+            }
+        }
+    }
+    const avgEntropy = entropy / seqLen;
+    const maxEntropy = Math.log(seqLen);
+    if (avgEntropy > 0.8 * maxEntropy) {
+        patterns.push('🌐 Broad');
+    }
+    
+    return patterns.length > 0 ? patterns.join(' · ') : 'Mixed pattern';
 }
 
 /**

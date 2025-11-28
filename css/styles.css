@@ -1561,3 +1561,69 @@ input[type="text"]:disabled {
     }
 }
 
+/* === Attention Pattern Guide === */
+.attention-pattern-guide {
+    background: linear-gradient(135deg, #e7f3ff 0%, #f0e7ff 100%);
+    border: 2px solid #667eea;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.attention-pattern-guide h4 {
+    color: #667eea;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.attention-pattern-guide p {
+    color: #495057;
+    margin-bottom: 15px;
+    font-size: 0.95em;
+}
+
+.pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.pattern-item {
+    background: white;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.pattern-item strong {
+    display: block;
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 0.9em;
+}
+
+.pattern-item small {
+    color: #6c757d;
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+/* === Head Pattern Badge === */
+.head-pattern-badge {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-size: 0.85em;
+    color: #495057;
+    text-align: center;
+    font-weight: 500;
+}
+
+.head-pattern-badge::before {
+    content: "Detected: ";
+    color: #6c757d;
+    font-weight: normal;
+}
+

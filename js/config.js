@@ -42,6 +42,16 @@ export const Config = {
             headDim: 64,
             isRealModel: true
         },
+        'distilbert-1head': {
+            name: 'DistilBERT (1 head)',
+            description: 'First attention head from DistilBERT layer 0',
+            weightsFile: 'models/distilbert-1head.json',
+            hfId: 'distilbert-base-uncased',
+            embedDim: 768,
+            numHeads: 1,
+            headDim: 64,
+            isRealModel: true
+        },
         'demo-tiny': {
             name: 'Demo (Tiny)',
             description: 'Small demo model with Xavier-initialized weights',
