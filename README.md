@@ -1,45 +1,53 @@
 # Multi-Head Self-Attention Visualizer
 
-An interactive visualization tool for understanding how Multi-Head Self-Attention works in Transformer models. This tool allows you to visualize attention patterns using either deterministic embeddings or **real pre-trained transformer models** via [transformers.js](https://huggingface.co/docs/transformers.js).
+An interactive visualization tool for understanding how Multi-Head Self-Attention works in Transformer models. Explore attention patterns using deterministic embeddings or **real pre-trained DistilBERT weights** with transformer tokenization via [transformers.js](https://huggingface.co/docs/transformers.js).
 
 ## 🚀 Features
 
-- **Step-by-step visualization** of the complete MHSA pipeline
-- **Real model support** via transformers.js (BERT, DistilBERT, GPT-2, etc.)
+- **Step-by-step visualization** of the complete 9-step MHSA pipeline
+- **Real model weights** - Pre-extracted DistilBERT attention weights from trained models
 - **Interactive attention heatmaps** showing where each token attends
 - **Q/K/V projection visualization** to understand learned representations
 - **Mathematical breakdown** with dimension tracking at each step
 - **Architecture diagrams** showing encoder/decoder structure
+- **Multiple attention heads** - Compare how different heads learn different patterns
+- **Temperature control** - Adjust softmax sharpness to see how it affects attention
 
 ## 📁 Project Structure
 
 ```
 mhsa/
-├── index.html          # Main HTML page
+├── index.html              # Main HTML page
 ├── css/
-│   └── styles.css      # All styling (1500+ lines extracted)
+│   └── styles.css          # All styling
 ├── js/
-│   ├── config.js       # Configuration & model definitions
-│   ├── math.js         # Matrix operations & utilities
-│   ├── mhsa.js         # Multi-Head Self-Attention class
-│   ├── embeddings.js   # Embedding generation & transformers.js integration
-│   ├── visualization.js # Canvas-based visualizations
-│   ├── steps.js        # Step-by-step content generation
-│   ├── ui.js           # DOM interactions & UI state
-│   └── main.js         # Application entry point
+│   ├── config.js           # Configuration & model definitions
+│   ├── math.js             # Matrix operations & utilities
+│   ├── mhsa.js             # Multi-Head Self-Attention implementation
+│   ├── embeddings.js       # Embedding generation & transformers.js integration
+│   ├── model-weights.js    # Pre-extracted weight loading & caching
+│   ├── visualization.js    # Canvas-based visualizations
+│   ├── steps.js            # Step-by-step content generation
+│   ├── ui.js               # DOM interactions & UI state
+│   └── main.js             # Application entry point
+├── models/
+│   ├── distilbert-4head.json   # DistilBERT layer 0, 4 heads (768-dim, 64 head-dim)
+│   ├── distilbert-2head.json   # DistilBERT layer 0, 2 heads
+│   ├── distilbert-1head.json   # DistilBERT layer 0, 1 head
+│   └── demo-tiny-weights.json  # Small demo model (64-dim, 4 heads)
+├── scripts/
+│   ├── extract_model_weights.py   # Extract weights from HuggingFace models
+│   ├── create_compact_weights.py  # Create compact weight files for web
+│   └── requirements.txt           # Python dependencies
 ├── LICENSE
 └── README.md
 ```
 
 ## 🏃 Getting Started
 
-### Basic Usage (No Server Required)
+### Quick Start (Local Server Required)
 
-For basic functionality with deterministic embeddings, simply open `index.html` in a browser.
-
-### With Real Model Support
-
-To use real transformer models, you need to serve the files via HTTP (due to ES modules and CORS):
+The visualizer uses ES modules and requires serving via HTTP:
 
 ```bash
 # Using Python
@@ -51,29 +59,32 @@ npx serve .
 # Then open http://localhost:8000
 ```
 
-## 🧠 Embedding Sources
+### With Real Model Embeddings
 
-The visualizer supports multiple embedding sources:
+For real-time DistilBERT embeddings via transformers.js, the model will be downloaded on first use (~50MB, cached in browser).
+
+## 🧠 Model Sources
+
+The visualizer supports multiple model configurations:
 
 | Source | Description | Speed |
 |--------|-------------|-------|
-| **Deterministic** | Hash-based embeddings (default) | Instant |
-| **Random** | Xavier-initialized random embeddings | Instant |
-| **BERT** | Real BERT-base-uncased embeddings | ~30s first load |
-| **DistilBERT** | Smaller, faster BERT variant | ~15s first load |
-| **GPT-2** | GPT-2 embeddings | ~30s first load |
-| **MiniLM** | Fast sentence transformer | ~10s first load |
+| **Deterministic** | Hash-based embeddings with random weights | Instant |
+| **Random** | Xavier-initialized random embeddings & weights | Instant |
+| **DistilBERT (4 heads)** | Real DistilBERT weights + transformers.js tokenization | ~5s first load |
+| **DistilBERT (2 heads)** | Subset of DistilBERT heads for clearer visualization | ~5s first load |
+| **Demo (Tiny)** | Small 64-dim model for fast experiments | Instant |
 
-> **Note:** Real models are downloaded once and cached in the browser. Subsequent loads are much faster.
+> **Note:** Real model weights are pre-extracted JSON files (~2-5MB). The transformers.js model for tokenization is cached in the browser after first load.
 
 ## 🔧 Module Overview
 
 ### `config.js`
 Central configuration including:
-- Default parameters
-- Available model definitions (HuggingFace model IDs)
-- Color schemes
-- Step names
+- Default parameters (embedding dimension, heads, temperature)
+- Model definitions with weight file paths
+- Color schemes for visualization
+- Step names for the 9-step sequence
 
 ### `math.js`
 Matrix operations:
@@ -86,92 +97,151 @@ Matrix operations:
 ### `mhsa.js`
 Multi-Head Self-Attention implementation:
 ```javascript
-const mhsa = new MultiHeadSelfAttention(embedDim, numHeads, temperature);
-mhsa.initializeRandomWeights();
+// With random weights
+const mhsa = createRandomMHSA(embedDim, numHeads, temperature);
+
+// With pre-extracted weights
+const mhsa = createMHSAFromWeights(loadedWeights, temperature);
+
 const result = mhsa.forward(embeddings);
 ```
+
+Supports:
+- Per-head Q, K, V, O projection weights
+- Optional biases (used by real models)
+- Temperature-controlled softmax
 
 ### `embeddings.js`
 Embedding generation and real model loading:
 ```javascript
-// Deterministic embeddings
-const embeddings = generateDeterministicEmbeddings(tokens, dim);
+// Deterministic/random embeddings
+const { embeddings, tokens } = await getEmbeddings(tokens, dim, source);
 
-// Real model embeddings
-const result = await getRealAttention(text, 'bert');
+// Real DistilBERT embeddings via transformers.js
+const { embeddings, tokens, hiddenSize } = await getDistilBertEmbeddings(text);
+```
+
+### `model-weights.js`
+Pre-extracted weight management:
+```javascript
+// Load weights with progress callback
+const weights = await loadModelWeights('distilbert-4head', (progress) => {
+    console.log(`Loading: ${progress.progress}%`);
+});
+
+// Weights are cached in memory
+const cached = isCached('distilbert-4head');
 ```
 
 ### `visualization.js`
 Canvas-based drawing functions:
-- `drawAttentionHeatmap()` - Attention weight grid
+- `drawAttentionHeatmap()` - Attention weight grid with color intensity
 - `drawSoftmaxVisualization()` - Before/after softmax comparison
-- `drawWeightMatrixVisualization()` - W^Q, W^K, W^V matrices
+- `drawWeightMatrixVisualization()` - W^Q, W^K, W^V matrix display
+- `drawAggregationVisualization()` - Value aggregation with weights
+- `drawComparisonVisualization()` - Input vs output embeddings
 
 ### `ui.js`
 UI state and DOM manipulation:
-- Tab switching
-- Step navigation
-- Architecture view rendering
-- Loading indicators
+- Tab switching (Overview, Step-by-Step, Heads, Mathematics)
+- Step navigation with progress bar
+- Architecture view rendering (Encoder/Decoder/Full)
+- Dynamic dimension displays
 
 ### `main.js`
 Application entry point:
 - Initializes all modules
-- Exposes global functions for onclick handlers
-- Coordinates attention computation pipeline
+- Coordinates the attention computation pipeline
+- Manages embedding source switching
+- Exposes global functions for UI handlers
 
-## 🎨 Customization
+## 🎨 Visualization Tabs
+
+### Overview
+- Combined attention heatmap (averaged across all heads)
+- Quick view of overall attention patterns
+
+### Step-by-Step Sequence
+Interactive 9-step walkthrough:
+1. Input Tokens
+2. Token Embeddings
+3. Linear Projections (Q, K, V)
+4. Query-Key Dot Product
+5. Scaling (÷√d_k)
+6. Softmax
+7. Attention × Values
+8. Concatenate Heads
+9. Final Output
+
+### Individual Heads
+- Side-by-side attention heatmaps for each head
+- See how different heads focus on different relationships
+
+### Mathematics
+- Detailed formulas with actual computed values
+- Matrix dimensions at each step
+- First-head deep dive with Q, K, V matrices
+
+## 🔬 How It Works
+
+1. **Input** - Text is split into tokens (or subword tokens with DistilBERT)
+2. **Embedding** - Tokens → dense vectors (768-dim for DistilBERT)
+3. **Projection** - X → Q, K, V via learned weight matrices per head
+4. **Attention Scores** - Q · K^T (query-key similarity)
+5. **Scaling** - Divide by √d_k to stabilize gradients
+6. **Softmax** - Convert scores to attention probabilities
+7. **Weighted Sum** - Attention weights × V (gather relevant information)
+8. **Concatenate** - Combine outputs from all heads
+9. **Output Projection** - Final linear transformation
+
+## 🛠 Extracting Custom Model Weights
+
+Use the provided Python scripts to extract weights from any HuggingFace model:
+
+```bash
+cd scripts
+pip install -r requirements.txt
+
+# Extract DistilBERT weights
+python extract_model_weights.py
+
+# Create compact per-head weight files
+python create_compact_weights.py
+```
 
 ### Adding a New Model
 
-Edit `js/config.js`:
+1. Extract weights using the Python scripts
+2. Add configuration to `js/config.js`:
 
 ```javascript
 models: {
     'my-model': {
-        name: 'My Custom Model',
-        hfId: 'username/model-name',  // HuggingFace model ID
+        name: 'My Model Name',
+        description: 'Description here',
+        weightsFile: 'models/my-model-weights.json',
         embedDim: 768,
-        numHeads: 12,
-        numLayers: 12,
-        description: 'My custom model description',
-        maxLength: 512
+        numHeads: 4,
+        headDim: 64,
+        isRealModel: true
     }
 }
 ```
 
-### Modifying Styles
+## 📊 Understanding the Visualizations
 
-All CSS is in `css/styles.css`. Key class prefixes:
-- `.dim-*` - Dimension tracker badges
-- `.matrix-*` - Matrix visualizations
-- `.arch-*` - Architecture diagrams
-- `.step-*` - Step navigation
-- `.qkv-*` - Q/K/V cards
+### Attention Heatmaps
+- **Rows** = Query tokens (what's asking)
+- **Columns** = Key tokens (what's being attended to)
+- **Intensity** = Attention weight (0 to 1)
+- Each row sums to 1 after softmax
 
-## 🔬 How It Works
-
-1. **Tokenization**: Input text is split into tokens
-2. **Embedding**: Tokens → dense vectors (deterministic or from real model)
-3. **Projection**: X → Q, K, V via learned weight matrices
-4. **Attention Scores**: Q · K^T / √d_k
-5. **Softmax**: Convert scores to probabilities
-6. **Weighted Sum**: Attention weights × V
-7. **Concatenate**: Combine all heads
-8. **Output Projection**: Final linear transformation
-
-## 📊 Real Attention Weights
-
-When using a real model, the visualizer:
-1. Loads the model and tokenizer from HuggingFace
-2. Runs the input through the model
-3. Extracts attention weights from a specified layer
-4. Displays actual learned attention patterns
-
-This shows how real transformers attend to different tokens, revealing patterns like:
-- Syntax-based attention (subject-verb relationships)
-- Semantic attention (related concepts)
-- Position-based attention (nearby tokens)
+### Real Model Patterns
+When using DistilBERT weights, you'll observe learned patterns:
+- **Diagonal attention** - Tokens attending to themselves
+- **Adjacent attention** - Local context (nearby words)
+- **Long-range attention** - Distant but related tokens
+- **Special token patterns** - [CLS] often aggregates globally
 
 ## 🌐 Browser Compatibility
 
@@ -180,9 +250,8 @@ This shows how real transformers attend to different tokens, revealing patterns 
 - Safari 15+
 - Edge 90+
 
-Requires ES modules and WebAssembly support for real models.
+Requires ES modules and WebAssembly support for transformers.js.
 
 ## 📄 License
 
 See [LICENSE](LICENSE) file.
-

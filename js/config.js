@@ -13,16 +13,45 @@ export const Config = {
     },
 
     // Available embedding sources
-    // Note: Xenova ONNX models don't export hidden states/attention weights,
-    // so we only offer methods that fully support all visualization features
     embeddingSources: {
         RANDOM: 'random',
-        DETERMINISTIC: 'deterministic'
+        DETERMINISTIC: 'deterministic',
+        DISTILBERT: 'distilbert'
     },
 
-    // Model configurations removed - Xenova ONNX exports don't support
-    // hidden state extraction required for proper embeddings visualization
-    models: {},
+    // Pre-extracted model configurations
+    // These use real weights extracted from trained models
+    models: {
+        'distilbert-4head': {
+            name: 'DistilBERT (4 heads)',
+            description: 'First 4 attention heads from DistilBERT layer 0',
+            weightsFile: 'models/distilbert-4head.json',
+            hfId: 'distilbert-base-uncased',
+            embedDim: 768,
+            numHeads: 4,
+            headDim: 64,
+            isRealModel: true
+        },
+        'distilbert-2head': {
+            name: 'DistilBERT (2 heads)',
+            description: 'First 2 attention heads from DistilBERT layer 0',
+            weightsFile: 'models/distilbert-2head.json',
+            hfId: 'distilbert-base-uncased',
+            embedDim: 768,
+            numHeads: 2,
+            headDim: 64,
+            isRealModel: true
+        },
+        'demo-tiny': {
+            name: 'Demo (Tiny)',
+            description: 'Small demo model with Xavier-initialized weights',
+            weightsFile: 'models/demo-tiny-weights.json',
+            embedDim: 64,
+            numHeads: 4,
+            headDim: 16,
+            isRealModel: false
+        }
+    },
 
     // Visualization colors
     colors: {

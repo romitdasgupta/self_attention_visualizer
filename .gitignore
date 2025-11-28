@@ -1,2 +1,11 @@
 .vercel
 .env*.local
+
+# Large model weight files (regenerate with scripts/extract_model_weights.py)
+models/*-full.json
+models/*-weights.json
+models/*.gz
+
+# Keep compact versions for web
+!models/demo-tiny-weights.json
+!models/distilbert-*head.json

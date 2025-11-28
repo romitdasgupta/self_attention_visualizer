@@ -1434,6 +1434,97 @@ canvas {
     color: #fd7e14;
 }
 
+/* Model option small text */
+.model-option small {
+    display: block;
+    font-size: 11px;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+.model-option.active small {
+    opacity: 0.9;
+}
+
+/* Real model option */
+.model-option.real-model {
+    border-color: #28a745;
+    position: relative;
+}
+
+.model-option.real-model::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #28a745, #20c997);
+    border-radius: 4px 4px 0 0;
+}
+
+.model-option.real-model.active {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border-color: #28a745;
+}
+
+/* Loading status */
+.model-loading-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+    border-radius: 6px;
+    color: #495057;
+    font-size: 14px;
+}
+
+.loading-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #667eea30;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Real model badge */
+.real-model-badge {
+    background: linear-gradient(135deg, #28a74515 0%, #20c99715 100%);
+    border: 1px solid #28a74540;
+    border-radius: 6px;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #155724;
+}
+
+.real-model-badge strong {
+    color: #28a745;
+}
+
+/* Disabled inputs */
+input[type="number"]:disabled,
+input[type="text"]:disabled {
+    background: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    border-color: #ced4da;
+}
+
+/* Head title with real weights indicator */
+.head-title small {
+    font-weight: normal;
+    color: #28a745;
+    font-size: 0.8em;
+}
+
 /* === Responsive === */
 @media (max-width: 768px) {
     h1 { font-size: 1.8em; }

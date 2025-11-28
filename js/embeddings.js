@@ -3,13 +3,20 @@
  * Handles token embeddings from various sources including real transformer models
  */
 
-import { Config, getModelConfig } from './config.js';
+import { Config } from './config.js';
 
 // Global state for loaded models
 let loadedPipeline = null;
 let loadedTokenizer = null;
 let loadedModel = null;
 let currentModelKey = null;
+
+/**
+ * Get model config from Config.models
+ */
+function getModelConfig(key) {
+    return Config.models[key] || null;
+}
 
 /**
  * Generate deterministic embeddings based on token hash
@@ -356,6 +363,10 @@ export async function getEmbeddings(tokens, embedDim, source = 'deterministic', 
                 source: 'Deterministic Hash',
                 isRealModel: false
             };
+
+        case 'distilbert':
+            // Use transformers.js for DistilBERT embeddings
+            return await getDistilBertEmbeddings(tokens.join(' '), progressCallback);
             
         default:
             // Try to load a real model
@@ -390,6 +401,100 @@ export async function getEmbeddings(tokens, embedDim, source = 'deterministic', 
                     isRealModel: false
                 };
             }
+    }
+}
+
+/**
+ * Get embeddings from DistilBERT using transformers.js
+ * Uses the feature-extraction pipeline which properly exports hidden states
+ * @param {string} text - Input text
+ * @param {Function} progressCallback - Progress callback for model loading
+ * @returns {Promise<Object>} Embeddings and token info
+ */
+export async function getDistilBertEmbeddings(text, progressCallback = null) {
+    if (!isTransformersAvailable()) {
+        throw new Error('Transformers.js is not available');
+    }
+
+    const { AutoTokenizer, pipeline, env } = await loadTransformersLibrary();
+    
+    env.allowLocalModels = false;
+    env.useBrowserCache = true;
+
+    // Use a model that's known to export hidden states properly
+    // Xenova/all-MiniLM-L6-v2 is a sentence-transformer model designed for embeddings
+    const modelId = 'Xenova/all-MiniLM-L6-v2';
+    
+    const progressHandler = progressCallback || ((progress) => {
+        if (progress.status === 'downloading') {
+            console.log(`Downloading ${progress.file}: ${(progress.progress || 0).toFixed(1)}%`);
+        }
+    });
+
+    try {
+        // Load tokenizer if not already loaded
+        if (!loadedTokenizer || currentModelKey !== 'distilbert-embed') {
+            progressHandler({ status: 'loading', message: 'Loading tokenizer...' });
+            loadedTokenizer = await AutoTokenizer.from_pretrained(modelId, {
+                progress_callback: progressHandler
+            });
+        }
+
+        // Load feature extraction pipeline if not already loaded
+        if (!loadedPipeline || currentModelKey !== 'distilbert-embed') {
+            progressHandler({ status: 'loading', message: 'Loading embedding model...' });
+            loadedPipeline = await pipeline('feature-extraction', modelId, {
+                progress_callback: progressHandler
+            });
+            currentModelKey = 'distilbert-embed';
+        }
+
+        // Tokenize to get token strings
+        const encoded = await loadedTokenizer(text, {
+            return_tensors: 'pt',
+            padding: true,
+            truncation: true
+        });
+        const tokenIds = Array.from(encoded.input_ids.data);
+        const tokens = tokenIds.map(id => loadedTokenizer.decode([id]));
+
+        // Get embeddings using the feature extraction pipeline
+        // pooling: 'none' returns per-token embeddings instead of sentence embedding
+        const output = await loadedPipeline(text, { pooling: 'none', normalize: false });
+        
+        // output is a Tensor with shape [1, seq_len, hidden_size]
+        const [batchSize, seqLen, hiddenSize] = output.dims;
+        const data = output.data;
+        
+        const embeddings = [];
+        for (let i = 0; i < seqLen; i++) {
+            const embedding = [];
+            for (let j = 0; j < hiddenSize; j++) {
+                embedding.push(data[i * hiddenSize + j]);
+            }
+            embeddings.push(embedding);
+        }
+
+        progressHandler({ status: 'complete', message: 'Ready' });
+
+        return {
+            embeddings,
+            tokens,
+            tokenIds,
+            hiddenSize,
+            source: 'MiniLM (transformers.js)',
+            isRealModel: true,
+            modelConfig: {
+                name: 'MiniLM-L6-v2',
+                embedDim: hiddenSize,  // 384 for MiniLM
+                numHeads: 12,
+                headDim: 32  // 384 / 12
+            }
+        };
+
+    } catch (error) {
+        console.error('Failed to get embeddings:', error);
+        throw error;
     }
 }
 

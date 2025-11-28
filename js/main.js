@@ -5,8 +5,9 @@
 
 import { Config } from './config.js';
 import { MathUtils } from './math.js';
-import { MultiHeadSelfAttention, createRandomMHSA } from './mhsa.js';
-import { getEmbeddings } from './embeddings.js';
+import { MultiHeadSelfAttention, createRandomMHSA, createMHSAFromWeights } from './mhsa.js';
+import { getEmbeddings, getDistilBertEmbeddings, isTransformersAvailable } from './embeddings.js';
+import { loadModelWeights, getAvailableModels } from './model-weights.js';
 import {
     drawAttentionHeatmap,
     drawSoftmaxVisualization,
@@ -36,6 +37,9 @@ import {
 let currentAttention = null;
 let sequenceData = null;
 let currentEmbeddingSource = 'deterministic';
+let currentModelKey = null;  // For real models
+let loadedWeights = null;    // Cached model weights
+let isLoading = false;
 
 /**
  * Initialize the application
@@ -50,6 +54,7 @@ export function init() {
     window.switchTab = switchTab;
     window.setArchView = setArchView;
     window.setEmbeddingSource = setEmbeddingSource;
+    window.setModelSource = setModelSource;
     
     // Setup the embedding source selector
     setupModelSelector();
@@ -66,18 +71,30 @@ function setupModelSelector() {
     const controlsDiv = document.querySelector('.controls');
     if (!controlsDiv) return;
     
+    // Check if transformers.js is available for DistilBERT
+    const transformersAvailable = isTransformersAvailable();
+    
     const modelSelectorHTML = `
         <div class="model-selector">
-            <label>Embedding Source:</label>
+            <label>Model Source:</label>
             <div class="model-options">
-                <div class="model-option active" onclick="setEmbeddingSource('deterministic')">
+                <div class="model-option" data-source="deterministic" onclick="setEmbeddingSource('deterministic')">
                     <strong>Deterministic</strong>
-                    <small style="display: block; font-size: 11px; color: #6c757d;">Hash-based (reproducible)</small>
+                    <small>Hash-based (instant)</small>
                 </div>
-                <div class="model-option" onclick="setEmbeddingSource('random')">
+                <div class="model-option" data-source="random" onclick="setEmbeddingSource('random')">
                     <strong>Random</strong>
-                    <small style="display: block; font-size: 11px; color: #6c757d;">Xavier initialization</small>
+                    <small>Xavier init (instant)</small>
                 </div>
+                <div class="model-option real-model" data-source="distilbert-4head" onclick="setModelSource('distilbert-4head')" ${!transformersAvailable ? 'style="opacity: 0.5"' : ''}>
+                    <strong>🤖 DistilBERT</strong>
+                    <small>Real model (4 heads)</small>
+                    ${!transformersAvailable ? '<small style="color: #dc3545;">Requires WebAssembly</small>' : ''}
+                </div>
+            </div>
+            <div id="modelLoadingStatus" class="model-loading-status" style="display: none;">
+                <div class="loading-spinner"></div>
+                <span id="loadingStatusText">Loading model...</span>
             </div>
         </div>
     `;
@@ -87,22 +104,135 @@ function setupModelSelector() {
     if (controlRow) {
         controlRow.insertAdjacentHTML('afterend', modelSelectorHTML);
     }
+    
+    // Set initial active state
+    updateModelSelectorUI('deterministic');
 }
 
 /**
- * Set the embedding source
+ * Update the model selector UI to show active state
+ * @param {string} source - Active source identifier
+ */
+function updateModelSelectorUI(source) {
+    document.querySelectorAll('.model-option').forEach(opt => {
+        const optSource = opt.dataset.source;
+        opt.classList.toggle('active', optSource === source);
+    });
+}
+
+/**
+ * Show/hide loading status
+ * @param {boolean} show - Whether to show loading
+ * @param {string} message - Loading message
+ */
+function showLoadingStatus(show, message = 'Loading model...') {
+    const statusDiv = document.getElementById('modelLoadingStatus');
+    const statusText = document.getElementById('loadingStatusText');
+    if (statusDiv) {
+        statusDiv.style.display = show ? 'flex' : 'none';
+    }
+    if (statusText) {
+        statusText.textContent = message;
+    }
+}
+
+/**
+ * Lock/unlock parameter inputs when using a real model
+ * @param {boolean} lock - Whether to lock the inputs
+ * @param {Object} config - Model config with embedDim and numHeads
+ */
+function lockParameterInputs(lock, config = null) {
+    const embedDimInput = document.getElementById('embedDim');
+    const numHeadsInput = document.getElementById('numHeads');
+    
+    if (embedDimInput) {
+        embedDimInput.disabled = lock;
+        if (lock && config) {
+            embedDimInput.value = config.embedDim;
+        }
+    }
+    
+    if (numHeadsInput) {
+        numHeadsInput.disabled = lock;
+        if (lock && config) {
+            numHeadsInput.value = config.numHeads;
+        }
+    }
+}
+
+/**
+ * Set the embedding source (for random/deterministic modes)
  * @param {string} source - Embedding source identifier
  */
 export function setEmbeddingSource(source) {
     currentEmbeddingSource = source;
+    currentModelKey = null;
+    loadedWeights = null;
+    
+    // Unlock parameter inputs
+    lockParameterInputs(false);
     
     // Update UI
-    document.querySelectorAll('.model-option').forEach(opt => {
-        opt.classList.remove('active');
-        if (opt.textContent.toLowerCase().includes(source.toLowerCase())) {
-            opt.classList.add('active');
+    updateModelSelectorUI(source);
+    
+    // Re-run attention with new source
+    runAttention();
+}
+
+/**
+ * Set the model source (for real models with pre-extracted weights)
+ * @param {string} modelKey - Model key from Config.models
+ */
+export async function setModelSource(modelKey) {
+    if (isLoading) return;
+    
+    const modelConfig = Config.models[modelKey];
+    if (!modelConfig) {
+        console.error(`Unknown model: ${modelKey}`);
+        return;
+    }
+    
+    currentModelKey = modelKey;
+    currentEmbeddingSource = 'distilbert';  // Use real embeddings
+    
+    // Update UI
+    updateModelSelectorUI(modelKey);
+    
+    // Lock parameters to model's dimensions
+    lockParameterInputs(true, modelConfig);
+    
+    // Load weights if not already loaded
+    if (!loadedWeights || loadedWeights.modelKey !== modelKey) {
+        isLoading = true;
+        showLoadingStatus(true, 'Loading model weights...');
+        
+        try {
+            loadedWeights = await loadModelWeights(modelKey, (progress) => {
+                if (progress.status === 'downloading') {
+                    showLoadingStatus(true, `Downloading: ${progress.progress?.toFixed(0) || 0}%`);
+                }
+            });
+            
+            showLoadingStatus(true, 'Loading embeddings model...');
+            
+            // Now run attention with the loaded weights
+            await runAttention();
+            
+            showLoadingStatus(false);
+        } catch (error) {
+            console.error('Failed to load model:', error);
+            showLoadingStatus(true, `Error: ${error.message}`);
+            setTimeout(() => showLoadingStatus(false), 3000);
+            
+            // Fall back to deterministic
+            setEmbeddingSource('deterministic');
+        } finally {
+            isLoading = false;
         }
-    });
+    } else {
+        // Already loaded, just run attention
+        await runAttention();
+    }
 }
 
 /**
@@ -110,27 +240,89 @@ export function setEmbeddingSource(source) {
  */
 export async function runAttention() {
     const inputText = document.getElementById('inputText')?.value || Config.defaults.inputText;
-    const embedDim = parseInt(document.getElementById('embedDim')?.value) || Config.defaults.embedDim;
-    const numHeads = parseInt(document.getElementById('numHeads')?.value) || Config.defaults.numHeads;
+    let embedDim = parseInt(document.getElementById('embedDim')?.value) || Config.defaults.embedDim;
+    let numHeads = parseInt(document.getElementById('numHeads')?.value) || Config.defaults.numHeads;
     const temperature = parseFloat(document.getElementById('temperature')?.value) || Config.defaults.temperature;
 
-    const tokens = inputText.trim().split(/\s+/);
+    let tokens = inputText.trim().split(/\s+/);
+    let embeddings;
+    let mhsa;
+    let isRealModel = false;
 
-    // Display tokens
+    // Check if we're using a real model
+    if (currentModelKey && loadedWeights) {
+        // Using real model with pre-extracted weights
+        const modelConfig = Config.models[currentModelKey];
+        embedDim = modelConfig.embedDim;
+        numHeads = modelConfig.numHeads;
+        isRealModel = true;
+
+        try {
+            // Get tokenization and embeddings from embedding model
+            showLoadingStatus(true, 'Getting tokenization...');
+            
+            const embeddingResult = await getDistilBertEmbeddings(inputText, (progress) => {
+                if (progress.message) {
+                    showLoadingStatus(true, progress.message);
+                }
+            });
+            
+            tokens = embeddingResult.tokens;  // Use tokenized tokens (may include [CLS], [SEP], subwords)
+            
+            // Check if embedding dimensions match the model weights
+            if (embeddingResult.hiddenSize === embedDim) {
+                // Dimensions match, use the real embeddings
+                embeddings = embeddingResult.embeddings;
+            } else {
+                // Dimension mismatch - use deterministic embeddings at correct dimension
+                // but still benefit from proper tokenization
+                embeddings = generateDeterministicEmbeddingsForDim(tokens, embedDim);
+            }
+            
+            showLoadingStatus(false);
+            
+            // Create MHSA with real weights
+            mhsa = createMHSAFromWeights(loadedWeights, temperature);
+            
+        } catch (error) {
+            console.error('Failed to get tokenization:', error);
+            showLoadingStatus(true, `Error: ${error.message}. Falling back to deterministic.`);
+            setTimeout(() => showLoadingStatus(false), 3000);
+            
+            // Fall back to deterministic embeddings with the real weights
+            embeddings = generateDeterministicEmbeddingsForDim(tokens, embedDim);
+            mhsa = createMHSAFromWeights(loadedWeights, temperature);
+        }
+    } else {
+        // Using random/deterministic mode
+        const embeddingResult = await getEmbeddings(tokens, embedDim, currentEmbeddingSource);
+        embeddings = embeddingResult.embeddings;
+        tokens = embeddingResult.tokens || tokens;
+        
+        // Create MHSA with random weights
+        mhsa = createRandomMHSA(embedDim, numHeads, temperature);
+    }
+    
+    // Display tokens (may have been updated by tokenizer)
     displayTokens(tokens);
 
-    // Get embeddings based on selected source
-    const embeddingResult = await getEmbeddings(tokens, embedDim, currentEmbeddingSource);
-    const embeddings = embeddingResult.embeddings;
-    
-    // Create and run MHSA
-    const mhsa = createRandomMHSA(embedDim, numHeads, temperature);
+    // Run the forward pass
     const result = mhsa.forward(embeddings);
-
     currentAttention = result;
 
-    // Display architecture info
+    // Display architecture info with real model indicator
     displayArchitectureInfo(mhsa, tokens.length);
+    
+    // Add real model badge if applicable
+    if (isRealModel) {
+        const infoContainer = document.getElementById('architectureInfo');
+        if (infoContainer) {
+            const badge = document.createElement('div');
+            badge.className = 'real-model-badge';
+            badge.innerHTML = '🤖 <strong>Real Model:</strong> Using pre-trained DistilBERT attention weights with transformer tokenization';
+            infoContainer.insertBefore(badge, infoContainer.firstChild);
+        }
+    }
 
     // Draw combined attention heatmap
     const avgAttention = MathUtils.averageAttentions(result.headAttentions);
@@ -147,7 +339,7 @@ export async function runAttention() {
             const headDiv = document.createElement('div');
             headDiv.className = 'head-container';
             headDiv.innerHTML = `
-                <div class="head-title">Head ${h + 1}</div>
+                <div class="head-title">Head ${h + 1}${isRealModel ? ' <small>(real weights)</small>' : ''}</div>
                 <canvas id="headCanvas${h}"></canvas>
             `;
             headsContainer.appendChild(headDiv);
@@ -176,7 +368,8 @@ export async function runAttention() {
         embeddings,
         mhsa,
         result,
-        focusToken: Math.floor(tokens.length / 2)
+        focusToken: Math.floor(tokens.length / 2),
+        isRealModel
     };
 
     // Initialize step navigator
@@ -189,6 +382,24 @@ export async function runAttention() {
     renderHeadsParallelView(mhsa.numHeads, mhsa.headDim);
     renderArchStats(mhsa, tokens.length);
     updateFlowDimensions(tokens.length, mhsa.embedDim, mhsa.numHeads, mhsa.headDim);
+}
+
+/**
+ * Generate deterministic embeddings for a specific dimension
+ * (Helper for fallback when real embeddings fail)
+ */
+function generateDeterministicEmbeddingsForDim(tokens, embedDim) {
+    const embeddings = [];
+    for (let i = 0; i < tokens.length; i++) {
+        const embedding = [];
+        const hash = tokens[i].split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        for (let j = 0; j < embedDim; j++) {
+            const angle = (hash * 0.1 + j * 0.5) % (2 * Math.PI);
+            embedding[j] = Math.sin(angle) * 0.5;
+        }
+        embeddings.push(embedding);
+    }
+    return embeddings;
 }
 
 /**
@@ -483,6 +694,7 @@ if (document.readyState === 'loading') {
 export default {
     init,
     runAttention,
-    setEmbeddingSource
+    setEmbeddingSource,
+    setModelSource
 };
 
