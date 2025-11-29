@@ -202,5 +202,16 @@
 
     <!-- Load modules -->
     <script type="module" src="js/main.js"></script>
+
+    <!-- Vercel Analytics (only loads in production) -->
+    <script>
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+            var script = document.createElement('script');
+            script.defer = true;
+            script.src = 'https://cdn.vercel-insights.com/v1/script.js';
+            document.head.appendChild(script);
+        }
+    </script>
 </body>
 </html>
